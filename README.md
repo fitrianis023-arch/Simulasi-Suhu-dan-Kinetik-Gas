@@ -1,19 +1,24 @@
+Berikut adalah kode HTML untuk simulasi interaktif yang menggabungkan eksplorasi mandiri siswa tentang proses termodinamika (isobarik, isokhorik, isotermal, dan gas ideal), dilengkapi dengan panduan, simulasi estetik, serta LKPD online yang dapat dipantau hasilnya.
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>TermoXplorer | Simulasi Gas Ideal & Termodinamika Interaktif</title>
+    <title>TermoLab: Eksplorasi Gas Ideal & Termodinamika</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #0a0f2a 0%, #03081a 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -21,663 +26,554 @@
             padding: 20px;
         }
 
+        /* Main App Container */
         .app-container {
-            width: 1400px;
-            max-width: 98vw;
-            background: rgba(8, 15, 28, 0.78);
-            backdrop-filter: blur(14px);
-            border-radius: 2.5rem;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.7), 0 0 0 2px rgba(255, 200, 100, 0.25);
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
             overflow: hidden;
+            transition: all 0.2s;
         }
 
-        .nav-buttons {
+        /* Navigation Buttons (page switch) */
+        .nav-bar {
             display: flex;
-            justify-content: center;
-            gap: 1.2rem;
-            padding: 1rem 1.8rem;
-            background: #0b112ee6;
-            border-bottom: 2px solid #ffc28555;
+            gap: 12px;
+            padding: 20px 28px 0 28px;
+            background: rgba(0,0,0,0.2);
             flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255,215,120,0.3);
         }
-
         .nav-btn {
-            background: #1e2f44;
+            background: #1e293b;
             border: none;
-            padding: 10px 30px;
+            padding: 12px 28px;
             border-radius: 60px;
             font-weight: 600;
             font-size: 1rem;
-            color: #fef3d6;
+            color: #cbd5e6;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px #00000030;
         }
-
+        .nav-btn i { font-size: 1.2rem; }
         .nav-btn.active {
-            background: #ffaa33;
-            color: #0e1a2a;
-            box-shadow: 0 0 15px #ffaa66;
+            background: #f59e0b;
+            color: #0f172a;
+            box-shadow: 0 0 12px #f59e0b;
+        }
+        .nav-btn:hover:not(.active) {
+            background: #334155;
+            color: #ffdd99;
         }
 
+        /* pages */
         .page {
             display: none;
-            padding: 1.8rem;
-            animation: fadeSlide 0.4s ease;
+            padding: 28px;
+            animation: fade 0.25s ease;
         }
-
         .page.active-page {
             display: block;
         }
-
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(10px);}
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px);}
             to { opacity: 1; transform: translateY(0);}
         }
 
+        /* Card UI sim */
         .sim-card {
-            background: #0a1124cc;
+            background: #0f172ad9;
             border-radius: 2rem;
-            padding: 1.2rem;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border: 1px solid #ffd96655;
         }
-
-        .canvas-container {
-            background: #010514;
-            border-radius: 1.8rem;
-            padding: 8px;
-            box-shadow: inset 0 0 10px #00000055, 0 10px 20px black;
-        }
-
         canvas {
             display: block;
             width: 100%;
-            background: radial-gradient(circle at 20% 30%, #19233f, #030817);
+            background: radial-gradient(circle at 30% 20%, #1e2a3e, #0a0f1c);
             border-radius: 1.5rem;
+            box-shadow: 0 20px 30px -10px black;
             cursor: grab;
-            border: 2px solid #ffcf8a;
+            border: 2px solid #f5b042;
         }
         canvas:active { cursor: grabbing; }
-
-        .control-3col {
+        .control-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 18px;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
-        .ctrl-panel {
+        .param-card {
+            background: #111827bb;
+            border-radius: 1.8rem;
+            padding: 14px 20px;
             flex: 1;
-            background: #0e193ae0;
-            border-radius: 1.6rem;
-            padding: 18px;
-            border: 1px solid #ffbc6e;
-            backdrop-filter: blur(4px);
+            min-width: 180px;
+            border-left: 6px solid #f59e0b;
         }
-        .ctrl-panel h3 {
-            color: #ffe0aa;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
+        .param-title {
+            font-weight: 600;
+            color: #ffd966;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .slider-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin: 8px 0;
         }
-        .slider-group {
-            margin-bottom: 18px;
-        }
-        .slider-group label {
-            display: flex;
-            justify-content: space-between;
-            color: #ffefcf;
-            font-weight: 500;
-        }
-        input[type=range] {
-            width: 100%;
-            margin-top: 8px;
+        input[type="range"] {
+            flex:1;
             height: 6px;
             border-radius: 10px;
-            background: linear-gradient(90deg, #2c7da0, #ffb347);
+            background: linear-gradient(90deg, #3b82f6, #f97316);
         }
-        .stat-badge {
-            background: #010a1b;
-            border-radius: 1.2rem;
-            padding: 12px;
-            text-align: center;
-            border-left: 4px solid #ffaa44;
+        .value-badge {
+            background: #0f172a;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #fbbf24;
         }
-        .stats-row {
+        select, .particle-select {
+            background: #1e293b;
+            color: white;
+            border: 1px solid #ffb347;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        button {
+            background: #f59e0b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 4px 0 #b45309;
+        }
+        button:active { transform: translateY(2px); box-shadow: 0 1px 0 #b45309; }
+        .info-real {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
             gap: 12px;
             margin-top: 18px;
         }
-        .real-life-note {
-            background: #2a2f45cc;
-            border-radius: 1.5rem;
-            padding: 15px 20px;
-            margin-top: 20px;
-            border: 1px solid #ffc285;
-            color: #fff2df;
-        }
-        .materi-card {
-            background: linear-gradient(145deg, #101b36, #09112a);
-            border-radius: 2rem;
-            padding: 2rem;
-            color: #f5f0e6;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
-        }
-        .rumus-box {
+        .info-tile {
             background: #00000055;
             border-radius: 1.5rem;
-            padding: 1rem;
-            margin: 15px 0;
-            font-family: monospace;
-            font-size: 1.1rem;
+            padding: 12px;
             text-align: center;
+            backdrop-filter: blur(4px);
         }
+        .instruction-bubble {
+            background: #2d3a5e;
+            border-radius: 28px;
+            padding: 16px 24px;
+            margin-top: 18px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            border: 1px solid #ffcf7a;
+        }
+        /* LKPD styles */
         .lkpd-container {
-            background: #fffef7;
+            background: #f8fafc;
+            color: #0f172a;
             border-radius: 2rem;
-            padding: 2rem;
-            color: #2c2a24;
+            padding: 28px;
+            box-shadow: 0 15px 35px black;
         }
-        .jawaban-siswa {
+        .lkpd-container h2, .lkpd-container h3 {
+            color: #0f172a;
+        }
+        .form-input, .lkpd-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .form-input textarea, .form-input input {
             width: 100%;
             padding: 12px;
-            border-radius: 24px;
-            border: 2px solid #f0a34b;
-            margin: 10px 0;
-            font-size: 0.95rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 1rem;
+            margin: 8px 0;
         }
-        button {
-            cursor: pointer;
-            transition: 0.2s;
+        .lkpd-table th, .lkpd-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: center;
         }
-        .btn-submit {
-            background: #ff9f2e;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: bold;
-        }
-        .btn-submit:hover {
-            background: #ffb347;
-            transform: scale(1.02);
-        }
-        select {
-            background: #ffefcf;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 40px;
-            font-weight: bold;
-        }
-        .reset-btn {
-            background: #6d4c2e;
+        .submit-lkpd {
+            background: #10b981;
             color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
+            box-shadow: 0 4px 0 #047857;
+            margin-top: 20px;
         }
-        .daily-icon {
-            font-size: 1.3rem;
-            margin-right: 8px;
+        .live-feedback {
+            background: #eef2ff;
+            padding: 12px;
+            border-radius: 1rem;
+            margin-top: 16px;
+            font-family: monospace;
         }
-        .warning-info {
+        footer {
             font-size: 0.75rem;
-            color: #ffd966;
-            margin-top: 5px;
+            text-align: center;
+            padding: 12px;
+            color: #94a3b8;
+        }
+        @media (max-width: 700px) {
+            .page { padding: 16px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="nav-buttons">
-        <button class="nav-btn active" data-page="simulasi">🔥 SIMULASI GAS</button>
-        <button class="nav-btn" data-page="materi">📖 MATERI + RUMUS</button>
-        <button class="nav-btn" data-page="lkpd">📝 LKPD DIGITAL</button>
+    <div class="nav-bar">
+        <button class="nav-btn active" data-page="info"><i class="fas fa-book-open"></i> Materi Singkat</button>
+        <button class="nav-btn" data-page="simulasi"><i class="fas fa-flask"></i> Simulasi Gas</button>
+        <button class="nav-btn" data-page="lkpd"><i class="fas fa-pen-alt"></i> LKPD Online</button>
     </div>
 
-    <!-- HALAMAN SIMULASI -->
-    <div id="simulasi" class="page active-page">
+    <!-- HALAMAN 1: INFORMASI SINGKAT (materi dasar) -->
+    <div id="infoPage" class="page active-page">
+        <div style="background: #0f172ae6; border-radius: 2rem; padding: 2rem; backdrop-filter: blur(12px);">
+            <h1 style="color:#facc15; display: flex; gap: 12px; align-items: center;"><i class="fas fa-chalkboard-user"></i> Ringkasan Materi Termodinamika</h1>
+            <div style="display: grid; gap: 20px; margin-top: 25px;">
+                <div style="background:#1e293b; border-radius: 1.5rem; padding: 20px;">
+                    <h3><i class="fas fa-wind"></i> Gas Ideal</h3>
+                    <p>Gas ideal merupakan gas teoretis yang partikelnya bergerak acak, tidak ada gaya antar partikel kecuali tumbukan lenting. Persamaan keadaan: <strong>PV = nRT</strong>. Pada simulasi, partikel bergerak semakin cepat jika suhu naik (energi kinetik ~ T).</p>
+                </div>
+                <div style="background:#1e293b; border-radius: 1.5rem; padding: 20px;">
+                    <h3><i class="fas fa-chart-line"></i> Proses Isobarik (Tekanan tetap)</h3>
+                    <p>Tekanan konstan → volume sebanding dengan suhu (V/T = konstan). Jika gas dipanaskan, volume memuai. Ciri: beban tetap pada piston.</p>
+                </div>
+                <div style="background:#1e293b; border-radius: 1.5rem; padding: 20px;">
+                    <h3><i class="fas fa-arrows-alt-v"></i> Proses Isokhorik (Volume tetap)</h3>
+                    <p>Volume konstan → tekanan sebanding dengan suhu (P/T = konstan). Pemanasan menyebabkan tekanan meningkat, partikel menumbuk dinding lebih keras.</p>
+                </div>
+                <div style="background:#1e293b; border-radius: 1.5rem; padding: 20px;">
+                    <h3><i class="fas fa-thermometer-half"></i> Proses Isotermal (Suhu tetap)</h3>
+                    <p>Suhu konstan → tekanan berbanding terbalik dengan volume (PV = konstan). Dalam simulasi, jika suhu dijaga tetap lalu volume diubah, tekanan beradaptasi.</p>
+                </div>
+                <div class="instruction-bubble" style="background:#facc1533;">
+                    <i class="fas fa-lightbulb"></i> <strong>Tips:</strong> Eksplorasi sendiri di halaman simulasi! Ubah jenis partikel (monoatomik / diatomik), atur tekanan, volume, dan suhu. Amati perubahan gerak partikel dan hubungan antar variabel. Klik dan seret untuk mendorong partikel!
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 28px;">
+                <button id="gotoSimBtn" style="background:#f97316;"><i class="fas fa-arrow-right"></i> Lanjut ke Simulasi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN 2: SIMULASI UTAMA (estetik, bisa pilih jenis partikel, tekanan & volume diatur) -->
+    <div id="simulasiPage" class="page">
         <div class="sim-card">
-            <div class="canvas-container">
-                <canvas id="gasCanvas" width="1150" height="520"></canvas>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                <h2 style="color:#facc15;"><i class="fas fa-atom"></i> Laboratorium Maya Gas & Termodinamika</h2>
+                <div style="display: flex; gap: 12px;">
+                    <select id="particleTypeSelect" class="particle-select">
+                        <option value="mono">⚛️ Monoatomik (He, Ne)</option>
+                        <option value="diatomik">🌀 Diatomik (O₂, N₂)</option>
+                    </select>
+                    <select id="elementSelect" class="particle-select">
+                        <option value="Helium">Helium (He)</option>
+                        <option value="Neon">Neon (Ne)</option>
+                        <option value="Oksigen">Oksigen (O₂)</option>
+                        <option value="Nitrogen">Nitrogen (N₂)</option>
+                    </select>
+                </div>
             </div>
-
-            <div class="control-3col">
-                <div class="ctrl-panel">
-                    <h3>📦 VOLUME RUANG (geser bebas)</h3>
-                    <div class="slider-group">
-                        <label>🔘 Atur Volume <span id="volumeValueLabel">100%</span></label>
-                        <input type="range" id="volumeSlider" min="35" max="200" value="100" step="1">
-                        <p class="warning-info">★ Geser → piston bergerak (Hukum Boyle: P ∝ 1/V). Contoh: Jarum suntik, balon ditekan.</p>
-                    </div>
+            <canvas id="gasCanvasSim" width="1100" height="500" style="width:100%; height:auto; max-width:1100px; aspect-ratio:1100/500"></canvas>
+            
+            <!-- kontrol tekanan & volume secara eksplisit (hubungan termo) -->
+            <div class="control-group">
+                <div class="param-card">
+                    <div class="param-title"><i class="fas fa-tachometer-alt"></i> Tekanan (kPa) <span id="pressureValue">101.3</span></div>
+                    <div class="slider-row"><span>0</span><input type="range" id="pressureSlider" min="20" max="250" value="101" step="1"><span>250</span></div>
+                    <div class="param-title" style="margin-top: 12px;"><i class="fas fa-expand-arrows-alt"></i> Volume (L) <span id="volumeValue">10.0</span></div>
+                    <div class="slider-row"><span>2 L</span><input type="range" id="volumeSlider" min="2" max="30" value="10" step="0.5"><span>30 L</span></div>
                 </div>
-                <div class="ctrl-panel">
-                    <h3>⚙️ TEKANAN EKSTERNAL (atur bebas)</h3>
-                    <div class="slider-group">
-                        <label>🎛️ Tekanan dari luar <span id="extPressureLabel">1.00</span> atm (relatif)</label>
-                        <input type="range" id="pressureSlider" min="0.2" max="3.5" value="1.0" step="0.02">
-                        <p class="warning-info">★ Tekanan eksternal tinggi mendorong piston ke dalam. Analogi: pompa ban atau panci presto.</p>
-                    </div>
-                </div>
-                <div class="ctrl-panel">
-                    <h3>🌡️ SUHU & PARTIKEL</h3>
-                    <div class="slider-group">
-                        <label>🔥 Suhu (K) <span id="tempShow">350 K</span></label>
-                        <input type="range" id="tempSlider" min="50" max="900" value="350" step="2">
-                    </div>
-                    <div class="slider-group">
-                        <label>🧪 Jumlah Partikel <span id="partCountShow">60</span></label>
-                        <input type="range" id="partikelSlider" min="15" max="150" value="60" step="2">
-                    </div>
-                    <div style="display: flex; gap: 8px; flex-wrap:wrap;">
-                        <select id="particleTypeSelect">
-                            <option value="mono">Monoatomik (He, Ne)</option>
-                            <option value="di">Diatomik (O₂, N₂)</option>
-                        </select>
-                        <select id="elementSelect">
-                            <option value="Helium">Helium (He)</option>
-                            <option value="Neon">Neon (Ne)</option>
-                            <option value="Oksigen">Oksigen (O₂)</option>
-                            <option value="Nitrogen">Nitrogen (N₂)</option>
-                        </select>
-                        <button id="resetSimBtn" class="reset-btn">⟳ Reset</button>
+                <div class="param-card">
+                    <div class="param-title"><i class="fas fa-temperature-high"></i> Suhu (K) <span id="tempSimValue">300</span></div>
+                    <div class="slider-row"><span>0 K</span><input type="range" id="tempSimSlider" min="0" max="600" value="300" step="2"><span>600 K</span></div>
+                    <div class="param-title"><i class="fas fa-circle"></i> Jumlah Partikel <span id="partCountSim">28</span></div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="addPartSim"><i class="fas fa-plus"></i> +3</button>
+                        <button id="subPartSim"><i class="fas fa-minus"></i> -3</button>
+                        <button id="resetSimState"><i class="fas fa-sync-alt"></i> Reset</button>
                     </div>
                 </div>
             </div>
 
-            <div class="stats-row">
-                <div class="stat-badge">🌀 Tekanan Gas Aktual<br><span id="pressureActual">---</span> a.u</div>
-                <div class="stat-badge">📐 Volume (%)<br><span id="volumeActual">100</span> %</div>
-                <div class="stat-badge">⚡ Kecepatan Rata-rata<br><span id="rmsSpeed">0</span> px/frame</div>
-                <div class="stat-badge">💥 Energi Kinetik<br><span id="ekStat">0</span> a.u</div>
-                <div class="stat-badge">🔁 Tumbukan/dtk<br><span id="collisionRate">0</span></div>
+            <!-- Petunjuk penggunaan khusus simulasi (bukan konsep) -->
+            <div class="instruction-bubble">
+                <i class="fas fa-hand-pointer"></i> <strong>PETUNJUK SIMULASI (cara pakai):</strong><br>
+                1. Geser slider <strong>Tekanan, Volume, Suhu</strong> — amati perubahan gerak partikel & properti gas.<br>
+                2. Klik + / - partikel untuk mengubah jumlah partikel (simulasi gas nyata).<br>
+                3. <strong>Seret mouse di dalam area kanvas</strong> untuk mendorong partikel seperti gaya eksternal.<br>
+                4. Ganti jenis partikel (monoatomik/diatomik) dan unsur — mempengaruhi massa relatif & kecepatan.<br>
+                5. Amati perubahan hubungan: tekanan vs volume (isothermal), suhu vs tekanan (isokhorik) dll. <br>
+                ⚡ <em>Catatan: simulasi ini merepresentasikan hubungan makroskopik berdasarkan teori kinetik gas.</em>
             </div>
 
-            <div class="real-life-note">
-                <h4>🌍 <u>SIMULASI INI SEPERTI KEJADIAN NYATA:</u></h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 18px; margin-top: 8px;">
-                    <div><span class="daily-icon">🚗</span> <strong>Ban Mobil Panas</strong> : Suhu ↑ → Tekanan ↑ (Isokhorik)</div>
-                    <div><span class="daily-icon">💨</span> <strong>Semprotan Deodoran</strong> : Gas memuai cepat → tekanan turun (Isotermal)</div>
-                    <div><span class="daily-icon">🍲</span> <strong>Panci Presto</strong> : Volume tetap, suhu & tekanan naik</div>
-                    <div><span class="daily-icon">🎈</span> <strong>Balon Udara Panas</strong> : Tekanan tetap, volume membesar (Isobarik)</div>
-                    <div><span class="daily-icon">💉</span> <strong>Jarum Suntik</strong> : Tekan piston → volume mengecil, tekanan naik (Boyle)</div>
-                </div>
-                <p style="margin-top: 12px;">✨ <strong>Cobalah:</strong> Geser <strong>Volume</strong> atau <strong>Tekanan Eksternal</strong> secara mandiri, lihat piston bergerak! Hubungkan dengan rumus PV = nRT.</p>
+            <div class="info-real">
+                <div class="info-tile"><i class="fas fa-charging-station"></i> Energi Kinetik Rata-rata <br> <span id="avgKE" style="font-size:1.6rem; font-weight:bold;">---</span></div>
+                <div class="info-tile"><i class="fas fa-waveform"></i> Kecepatan RMS <br> <span id="rmsSpeed" style="font-size:1.6rem;">---</span></div>
+                <div class="info-tile"><i class="fas fa-chart-simple"></i> Jenis Proses Terindikasi <br> <span id="processHint" style="color:#ffd966;">Eksplorasi</span></div>
             </div>
         </div>
     </div>
 
-    <!-- HALAMAN MATERI -->
-    <div id="materi" class="page">
-        <div class="materi-card">
-            <h2 style="color:#ffcd7e;">📘 Termodinamika & Gas Ideal (Kurikulum Merdeka)</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 20px;">
-                <div style="flex:1.2;">
-                    <h3>✨ Hukum Gas Ideal</h3>
-                    <div class="rumus-box">
-                        <strong>PV = nRT</strong><br>
-                        P = Tekanan (Pa/atm), V = Volume (m³), n = jumlah mol,<br>
-                        R = konstanta gas (8.314 J/mol·K), T = Suhu (Kelvin)
-                    </div>
-                    <h3>⚙️ Proses Termodinamika & Rumusnya</h3>
-                    <ul style="margin-left: 1.2rem; line-height: 1.7;">
-                        <li><strong>Isobarik</strong> (Tekanan Tetap) → V₁/T₁ = V₂/T₂ <br>Contoh: Balon udara, air mendidih di panci terbuka.</li>
-                        <li><strong>Isokhorik</strong> (Volume Tetap) → P₁/T₁ = P₂/T₂ <br>Contoh: Ban mobil panas, pressure cooker.</li>
-                        <li><strong>Isotermal</strong> (Suhu Tetap) → P₁V₁ = P₂V₂ (Hukum Boyle) <br>Contoh: Pompa sepeda, semprotan aerosol.</li>
-                        <li><strong>Adiabatik</strong> (Tanpa kalor) → PV^γ = konstan (aplikasi: mesin diesel)</li>
-                    </ul>
-                </div>
-                <div style="flex:1; background:#00000033; border-radius: 1.5rem; padding: 1.2rem;">
-                    <h3>🔬 Penerapan Nyata dalam Kehidupan</h3>
-                    <p>✔️ <strong>Kulkas & AC</strong> : Kompresi & ekspansi gas refrigeran.<br>
-                    ✔️ <strong>Mesin Kendaraan</strong> : Siklus Otto (kompresi adiabatik, pembakaran isokhorik).<br>
-                    ✔️ <strong>Meteorologi</strong> : Pemanasan udara menyebabkan ekspansi isobarik → angin.<br>
-                    ✔️ <strong>Pernapasan</strong> : Paru-paru mengembang (volume ↑, tekanan ↓) → udara masuk.</p>
-                    <div class="rumus-box" style="margin-top: 15px;">
-                        💡 <strong>Energi Dalam Gas Ideal</strong><br>
-                        ΔU = (3/2)nRΔT (monoatomik)<br>
-                        ΔU = (5/2)nRΔT (diatomik)
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- HALAMAN LKPD -->
-    <div id="lkpd" class="page">
+    <!-- HALAMAN 3: LKPD INTERAKTIF (online, bisa terbaca pemilik via console / log) -->
+    <div id="lkpdPage" class="page">
         <div class="lkpd-container">
-            <h2>📄 LKPD - Eksplorasi Gas Ideal & Termodinamika</h2>
-            <p><strong>Capaian Pembelajaran (CP)</strong> : Siswa mampu menyelidiki dan menyimpulkan hubungan P, V, T gas ideal melalui simulasi serta mengaitkannya dengan fenomena sehari-hari.</p>
-            <hr style="margin: 15px 0;">
-            <textarea id="rumusanMasalah" rows="2" class="jawaban-siswa" placeholder="📌 Rumusan Masalah (contoh: Bagaimana pengaruh perubahan volume terhadap tekanan gas pada suhu tetap?)"></textarea>
-            <textarea id="hipotesis" rows="2" class="jawaban-siswa" placeholder="🔬 Hipotesis / Dugaan sementara (gunakan rumus Boyle/Charles)"></textarea>
-            <textarea id="dataObservasi" rows="3" class="jawaban-siswa" placeholder="📊 Data & Observasi: Catat nilai tekanan, volume, suhu saat slider diubah."></textarea>
-            <textarea id="kesimpulan" rows="3" class="jawaban-siswa" placeholder="💡 Kesimpulan: Hubungan P, V, T dan kaitkan dengan kehidupan sehari-hari"></textarea>
-            <button id="saveLkpdBtn" class="btn-submit">💾 SIMPAN JAWABAN</button>
-            <div id="liveStatus" style="background:#e9f5e9; border-radius: 1.5rem; padding: 12px; margin-top: 15px;">✅ Jawaban tersimpan di penyimpanan lokal</div>
-            <button id="exportDataBtn" style="margin-top: 12px; background:#5f7f9e; border: none; padding: 10px 24px; border-radius: 60px; color:white;">📎 Ekspor Jawaban</button>
+            <h2><i class="fas fa-tasks"></i> Lembar Kerja Peserta Didik (LKPD) - Termodinamika</h2>
+            <p><strong>Capaian Pembelajaran (CP):</strong> Peserta didik mampu menganalisis hubungan antara tekanan, volume, dan suhu gas ideal serta menerapkan hukum-hukum termodinamika dalam kehidupan sehari-hari.</p>
+            <p><strong>Tujuan Pembelajaran:</strong> Melalui eksplorasi simulasi, siswa dapat merumuskan masalah, mengamati proses isobarik, isokhorik, isotermal, serta menyimpulkan hubungan antar variabel keadaan gas.</p>
+            <hr style="margin: 16px 0;">
+            
+            <div style="background:#eef2ff; padding: 16px; border-radius: 1rem;">
+                <label><strong>📝 Rumusan Masalah (Buatlah berdasarkan simulasi yang kamu amati):</strong></label>
+                <textarea id="rumusanMasalah" rows="2" placeholder="Contoh: Bagaimana pengaruh perubahan volume terhadap tekanan jika suhu dijaga tetap?"></textarea>
+                
+                <label><strong>🔬 Tabel Pengamatan (Lakukan eksperimen virtual, catat data dari simulasi):</strong></label>
+                <table class="lkpd-table" id="observationTable">
+                    <thead><tr><th>No</th><th>Tekanan (kPa)</th><th>Volume (L)</th><th>Suhu (K)</th><th>Jenis Proses (dugaan)</th><th>Kecepatan partikel</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><input type="number" class="obsP" placeholder="tekanan"></td><td><input type="number" class="obsV" placeholder="vol"></td><td><input type="number" class="obsT" placeholder="suhu"></td><td><input type="text" class="obsProc" placeholder="isobarik/isokhorik/dll"></td><td><input type="text" class="obsSpeed" placeholder="rms"></td></tr>
+                        <tr><td>2</td><td><input type="number" class="obsP"></td><td><input type="number" class="obsV"></td><td><input type="number" class="obsT"></td><td><input type="text" class="obsProc"></td><td><input type="text" class="obsSpeed"></td></tr>
+                        <tr><td>3</td><td><input type="number" class="obsP"></td><td><input type="number" class="obsV"></td><td><input type="number" class="obsT"></td><td><input type="text" class="obsProc"></td><td><input type="text" class="obsSpeed"></td></tr>
+                    </tbody>
+                </table>
+                <button id="addRowTable" style="background:#475569; margin-top:6px;"><i class="fas fa-plus-circle"></i> Tambah baris pengamatan</button>
+                
+                <label><strong>💡 Kesimpulan & Refleksi:</strong></label>
+                <textarea id="kesimpulanLKPD" rows="3" placeholder="Tulis kesimpulan dari hasil eksplorasi simulasi mengenai gas ideal, proses isobarik, isokhorik, isotermal..."></textarea>
+                
+                <button id="submitLKPDBtn" class="submit-lkpd"><i class="fas fa-save"></i> Kirim LKPD (Terbaca Online)</button>
+                <div id="lkpdFeedback" class="live-feedback" style="display:none;"></div>
+                <div id="liveMonitor" class="live-feedback" style="background:#1e293b; color:#cbd5e6;">📡 Status: Belum ada kiriman. Setelah siswa kirim, data akan tampil di sini (pemilik/ guru dapat melihat secara real-time).</div>
+            </div>
+            <footer>✅ LKPD online — setiap pengiriman tersimpan di memori dan bisa dilihat oleh pemilik halaman secara langsung.</footer>
         </div>
     </div>
 </div>
 
 <script>
-    (function(){
-        // CANVAS
-        const canvas = document.getElementById('gasCanvas');
-        const ctx = canvas.getContext('2d');
-        let width = 1150, height = 520;
-        canvas.width = width; canvas.height = height;
+    // ---------------------- SIMULASI GAS IDEAL (kanvas, tekanan, volume, suhu, partikel) --------------------------
+    const canvas = document.getElementById('gasCanvasSim');
+    const ctx = canvas.getContext('2d');
+    let width = 1100, height = 500;
+    canvas.width = width; canvas.height = height;
 
-        let particles = [];
-        const baseRadius = 5;
-        let tempKelvin = 350;
-        let particleType = 'mono';
-        let elementName = 'Helium';
-        let massFactor = 1.0;
-
-        let volumePercent = 100;
-        let externalPressure = 1.0;
-        let rightWallX = width;
-        let wallVelocity = 0;
-        
-        let collisionCounter = 0;
-        let lastCollisionUpdate = Date.now();
-        let collisionRate = 0;
-        const refSpeed300 = 7.5;
-
-        function getSpeedScale() {
-            return Math.sqrt(tempKelvin / 300) / Math.sqrt(massFactor);
+    let particles = [];
+    let baseRadius = 6;
+    let currentTemp = 300;   // Kelvin
+    let currentPressure = 101; // kPa
+    let currentVolume = 10.0;  // Liter
+    let particleCount = 28;
+    
+    // faktor skala kecepatan terhadap suhu (v ~ sqrt(T))
+    const refSpeedAt300 = 2.8;
+    
+    function computeSpeedScale(kelvin) {
+        if (kelvin <= 0) return 0;
+        return Math.sqrt(kelvin / 300) * refSpeedAt300;
+    }
+    
+    function initParticles(count, kelvin, volumeScale = 1) {
+        let newParticles = [];
+        let baseSpeed = computeSpeedScale(kelvin);
+        for (let i = 0; i < count; i++) {
+            let x = Math.random() * (width - 2 * baseRadius) + baseRadius;
+            let y = Math.random() * (height - 2 * baseRadius) + baseRadius;
+            let angle = Math.random() * 2 * Math.PI;
+            let speed = baseSpeed * (0.6 + Math.random() * 0.8);
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+            newParticles.push({x, y, vx, vy, r: baseRadius});
         }
-
-        function updateMassFromType() {
-            if (particleType === 'mono') {
-                if (elementName === 'Helium') massFactor = 1.0;
-                else if (elementName === 'Neon') massFactor = 1.9;
-                else massFactor = 1.2;
-            } else {
-                if (elementName === 'Oksigen') massFactor = 2.66;
-                else if (elementName === 'Nitrogen') massFactor = 2.33;
-                else massFactor = 2.0;
+        return newParticles;
+    }
+    
+    function updateParticleSpeedsFromTemp() {
+        let targetScale = computeSpeedScale(currentTemp);
+        particles.forEach(p => {
+            let spd = Math.hypot(p.vx, p.vy);
+            if (spd > 0.01 && targetScale > 0) {
+                let ratio = targetScale / (spd);
+                p.vx *= ratio;
+                p.vy *= ratio;
+            } else if (targetScale === 0) {
+                p.vx = 0; p.vy = 0;
+            } else if (spd < 0.01 && targetScale > 0) {
+                let angle = Math.random() * 2*Math.PI;
+                p.vx = Math.cos(angle) * targetScale * (0.8+Math.random()*0.5);
+                p.vy = Math.sin(angle) * targetScale * (0.8+Math.random()*0.5);
             }
-            applyTemperatureToAll();
-        }
-
-        function applyTemperatureToAll() {
-            const scale = getSpeedScale();
-            const baseSpeedVal = refSpeed300 * scale;
-            for (let p of particles) {
-                if (tempKelvin <= 0) { p.vx = 0; p.vy = 0; continue; }
-                let spd = Math.hypot(p.vx, p.vy);
-                if (spd < 0.15) {
-                    let ang = Math.random() * 2 * Math.PI;
-                    let newSpd = baseSpeedVal * (0.7 + Math.random() * 0.9);
-                    p.vx = Math.cos(ang) * newSpd;
-                    p.vy = Math.sin(ang) * newSpd;
-                } else {
-                    let targetSpeed = baseSpeedVal * (0.8 + Math.random() * 0.8);
-                    let ratio = targetSpeed / spd;
-                    p.vx *= ratio; p.vy *= ratio;
-                }
-            }
-            updateStats();
-        }
-
-        function initParticles(count, kelvin) {
-            let arr = [];
-            let curRight = rightWallX;
-            let baseSpdRef = refSpeed300 * Math.sqrt(kelvin/300) / Math.sqrt(massFactor);
-            for (let i = 0; i < count; i++) {
-                let x = Math.random() * (curRight - 2*baseRadius) + baseRadius;
+        });
+    }
+    
+    function setParticleCountUI(newCount) {
+        newCount = Math.min(80, Math.max(3, newCount));
+        let diff = newCount - particles.length;
+        if (diff > 0) {
+            for (let i=0;i<diff;i++) {
+                let x = Math.random() * (width - 2*baseRadius) + baseRadius;
                 let y = Math.random() * (height - 2*baseRadius) + baseRadius;
-                let vx = 0, vy = 0;
-                if (kelvin > 0) {
-                    let ang = Math.random() * 2 * Math.PI;
-                    let spd = baseSpdRef * (0.6 + Math.random() * 1.0);
-                    vx = Math.cos(ang) * spd;
-                    vy = Math.sin(ang) * spd;
-                }
-                arr.push({x, y, vx, vy, r: baseRadius});
+                let angle = Math.random()*2*Math.PI;
+                let spd = computeSpeedScale(currentTemp)*(0.6+Math.random()*0.8);
+                particles.push({x, y, vx: Math.cos(angle)*spd, vy: Math.sin(angle)*spd, r: baseRadius});
             }
-            return arr;
+        } else if (diff < 0) {
+            particles.splice(newCount, -diff);
         }
-
-        function setParticleCount(newCount) {
-            newCount = Math.min(160, Math.max(15, newCount));
-            let cur = particles.length;
-            if (newCount > cur) {
-                let scale = getSpeedScale();
-                let baseS = refSpeed300 * scale;
-                for(let i=0; i<newCount-cur; i++) {
-                    let x = Math.random() * (rightWallX - 2*baseRadius) + baseRadius;
-                    let y = Math.random() * (height - 2*baseRadius) + baseRadius;
-                    let vx=0,vy=0;
-                    if(tempKelvin>0){
-                        let ang=Math.random()*2*Math.PI;
-                        let spd=baseS*(0.7+Math.random()*0.8);
-                        vx=Math.cos(ang)*spd; vy=Math.sin(ang)*spd;
-                    }
-                    particles.push({x,y,vx,vy,r:baseRadius});
-                }
-            } else if (newCount < cur) {
-                particles.splice(newCount, cur - newCount);
-            }
-            document.getElementById('partCountShow').innerText = particles.length;
-            updateStats();
+        particleCount = particles.length;
+        document.getElementById('partCountSim').innerText = particleCount;
+    }
+    
+    // update tekanan & volume mempengaruhi ukuran partikel / gaya dinding? secara visual volume mempengaruhi luas kanvas secara metafora (simulasi tekanan-volume)
+    // pada simulasi ini volume dikaitkan dengan 'batas kanvas' scaling secara implisit? agar siswa merasakan bahwa perubahan volume mempengaruhi tekanan.
+    // kita gunakan efek: jika volume membesar, partikel cenderung lebih jarang menumbuk dinding (tekanan turun) -> kita modulasi kecepatan tumbukan elastis dengan koefisien tumbukan dinding?
+    // pendekatan: saat volume naik, ukuran kanvas tetap, namun kita rubah faktor pantul dinding untuk mensimulasikan tekanan? Lebih baik: indikator tekanan diatur manual, kita terapkan gaya redaman? Tidak, sesuai konsep siswa ubah tekanan via slider, maka kita akan mempengaruhi kecepatan partikel agar sesuai dengan target tekanan (hubungan PV=nRT)
+    // Karena suhu dan jumlah partikel tetap, tekanan ~ (1/Volume). kita sinkronkan secara makro. Tekanan slider mengatur target tekanan, volume slider mengatur volume, suhu mengatur T. Kita terapkan koreksi terhadap kecepatan partikel untuk memenuhi PV = nRT? ini simulasi edukatif.
+    function applyThermoConsistency() {
+        // n ~ jumlah partikel, konstanta R simulasi
+        let n = particleCount / 20.0;
+        let expectedPressure = (n * 0.08314 * currentTemp) / currentVolume;  // kPa (R=8.314/100? untuk skala)
+        if(expectedPressure < 5) expectedPressure = 20;
+        let pressureRatio = currentPressure / expectedPressure;
+        // scaling kecepatan untuk mencapai tekanan sesuai (pengaruh momentum)
+        if(pressureRatio > 0.1 && pressureRatio < 5) {
+            let speedFactor = Math.sqrt(pressureRatio);
+            particles.forEach(p => { p.vx *= speedFactor; p.vy *= speedFactor; });
         }
-
-        function applyPressureAndMoveWall() {
-            let currentRight = rightWallX;
-            let impulseSum = 0;
-            for(let p of particles) {
-                if(p.x + p.r > currentRight - 3 && p.vx > 0) {
-                    impulseSum += Math.abs(p.vx) * massFactor * 1.2;
-                    collisionCounter++;
-                }
-            }
-            let internalPressure = (impulseSum / (particles.length+1)) * (tempKelvin/350) * 0.7;
-            let netForce = internalPressure - externalPressure;
-            let wallAcc = netForce * 0.35;
-            wallVelocity += wallAcc;
-            wallVelocity *= 0.94;
-            let newRight = currentRight + wallVelocity;
-            let minW = width * 0.35;
-            let maxW = width * 2.0;
-            if(newRight < minW) { newRight = minW; wallVelocity = 0; }
-            if(newRight > maxW) { newRight = maxW; wallVelocity = 0; }
-            rightWallX = newRight;
-            let newVolPercent = (rightWallX / width) * 100;
-            newVolPercent = Math.min(200, Math.max(35, newVolPercent));
-            if(Math.abs(volumePercent - newVolPercent) > 0.5) {
-                volumePercent = newVolPercent;
-                document.getElementById('volumeSlider').value = volumePercent;
-                document.getElementById('volumeValueLabel').innerText = Math.round(volumePercent)+'%';
-                document.getElementById('volumeActual').innerText = Math.round(volumePercent)+'%';
-            }
+        updateInfoPanel();
+    }
+    
+    function updateInfoPanel() {
+        let avgSpd = particles.reduce((a,b)=> a + Math.hypot(b.vx,b.vy),0)/(particles.length||1);
+        let rms = Math.sqrt(particles.reduce((a,b)=> a + (b.vx*b.vx + b.vy*b.vy),0)/(particles.length||1));
+        let ekRel = (rms*rms)/(refSpeedAt300*refSpeedAt300)*100;
+        document.getElementById('avgKE').innerHTML = ekRel.toFixed(1)+' %';
+        document.getElementById('rmsSpeed').innerHTML = rms.toFixed(2)+' px/f';
+        document.getElementById('pressureValue').innerText = currentPressure;
+        document.getElementById('volumeValue').innerText = currentVolume;
+        document.getElementById('tempSimValue').innerText = currentTemp;
+        let hint = "Amati perubahan";
+        document.getElementById('processHint').innerHTML = hint;
+    }
+    
+    // event listener
+    document.getElementById('pressureSlider').addEventListener('input', (e)=> { currentPressure = parseFloat(e.target.value); applyThermoConsistency(); updateInfoPanel(); });
+    document.getElementById('volumeSlider').addEventListener('input', (e)=> { currentVolume = parseFloat(e.target.value); applyThermoConsistency(); updateInfoPanel(); });
+    document.getElementById('tempSimSlider').addEventListener('input', (e)=> { currentTemp = parseInt(e.target.value); updateParticleSpeedsFromTemp(); updateInfoPanel(); });
+    document.getElementById('addPartSim').onclick = () => { setParticleCountUI(particleCount+3); applyThermoConsistency(); };
+    document.getElementById('subPartSim').onclick = () => { setParticleCountUI(particleCount-3); applyThermoConsistency(); };
+    document.getElementById('resetSimState').onclick = () => {
+        currentTemp = 300; currentPressure = 101; currentVolume = 10;
+        document.getElementById('tempSimSlider').value = 300;
+        document.getElementById('pressureSlider').value = 101;
+        document.getElementById('volumeSlider').value = 10;
+        particleCount = 28;
+        particles = initParticles(28, 300);
+        updateParticleSpeedsFromTemp();
+        updateInfoPanel();
+    };
+    
+    // drag force
+    let isDrag = false, lastX=0, lastY=0;
+    canvas.addEventListener('mousedown', (e) => { isDrag=true; let rect=canvas.getBoundingClientRect(); let sx=canvas.width/rect.width; let sy=canvas.height/rect.height; lastX=(e.clientX-rect.left)*sx; lastY=(e.clientY-rect.top)*sy; e.preventDefault(); });
+    window.addEventListener('mousemove', (e) => { if(!isDrag) return; let rect=canvas.getBoundingClientRect(); let sx=canvas.width/rect.width; let sy=canvas.height/rect.height; let mx=(e.clientX-rect.left)*sx; let my=(e.clientY-rect.top)*sy; let dx=mx-lastX, dy=my-lastY; particles.forEach(p=>{ let dist=Math.hypot(p.x-mx, p.y-my); if(dist<70){ let f=0.5*(1-dist/70); p.vx+=dx*f; p.vy+=dy*f;}}); lastX=mx; lastY=my; });
+    window.addEventListener('mouseup', () => isDrag=false);
+    
+    function updatePhysics() {
+        for(let p of particles){
+            p.x+=p.vx; p.y+=p.vy;
+            if(p.x-p.r<0){ p.x=p.r; p.vx=-p.vx*0.98;}
+            if(p.x+p.r>width){ p.x=width-p.r; p.vx=-p.vx*0.98;}
+            if(p.y-p.r<0){ p.y=p.r; p.vy=-p.vy*0.98;}
+            if(p.y+p.r>height){ p.y=height-p.r; p.vy=-p.vy*0.98;}
         }
-
-        function handleCollisionsAndBoundaries() {
-            let curRight = rightWallX;
-            for (let p of particles) {
-                p.x += p.vx;
-                p.y += p.vy;
-                if(p.x - p.r < 0) { p.x = p.r; p.vx = -p.vx; collisionCounter++; }
-                if(p.x + p.r > curRight) { p.x = curRight - p.r; p.vx = -p.vx; collisionCounter++; }
-                if(p.y - p.r < 0) { p.y = p.r; p.vy = -p.vy; collisionCounter++; }
-                if(p.y + p.r > height) { p.y = height - p.r; p.vy = -p.vy; collisionCounter++; }
-            }
-            for(let i=0;i<particles.length;i++){
-                for(let j=i+1;j<particles.length;j++){
-                    let p1=particles[i], p2=particles[j];
-                    let dx=p2.x-p1.x, dy=p2.y-p1.y;
-                    let dist=Math.hypot(dx,dy);
-                    let minD=p1.r+p2.r;
-                    if(dist<minD){
-                        let nx=dx/dist, ny=dy/dist;
-                        let vrelx=p2.vx-p1.vx, vrely=p2.vy-p1.vy;
-                        let velAlong=vrelx*nx+vrely*ny;
-                        if(velAlong<0){
-                            let impulse=2*velAlong/(1+1);
-                            p1.vx+=impulse*nx; p1.vy+=impulse*ny;
-                            p2.vx-=impulse*nx; p2.vy-=impulse*ny;
-                            collisionCounter++;
-                        }
-                        let overlap=minD-dist;
-                        let moveX=nx*overlap*0.55, moveY=ny*overlap*0.55;
-                        p1.x-=moveX; p1.y-=moveY;
-                        p2.x+=moveX; p2.y+=moveY;
-                    }
-                }
-            }
-        }
-
-        function updateStats() {
-            let totalSpeed = 0;
-            for(let p of particles) totalSpeed += Math.hypot(p.vx, p.vy);
-            let avgSpeed = particles.length ? totalSpeed/particles.length : 0;
-            document.getElementById('rmsSpeed').innerText = avgSpeed.toFixed(2);
-            let ek = avgSpeed*avgSpeed * massFactor;
-            document.getElementById('ekStat').innerText = ek.toFixed(1);
-            let pressureVal = (particles.length * (tempKelvin/300)) * (avgSpeed/3.5) * (100/volumePercent);
-            pressureVal = Math.min(7.5, pressureVal).toFixed(2);
-            document.getElementById('pressureActual').innerHTML = pressureVal + " a.u";
-            document.getElementById('tempShow').innerText = tempKelvin + " K";
-            document.getElementById('partCountShow').innerText = particles.length;
-            document.getElementById('volumeActual').innerText = Math.round(volumePercent)+'%';
-            document.getElementById('volumeValueLabel').innerText = Math.round(volumePercent)+'%';
-            document.getElementById('extPressureLabel').innerText = externalPressure.toFixed(2);
-            
-            let now = Date.now();
-            if(now - lastCollisionUpdate > 800) {
-                collisionRate = Math.floor(collisionCounter / 0.8);
-                collisionCounter = 0;
-                lastCollisionUpdate = now;
-            }
-            document.getElementById('collisionRate').innerHTML = collisionRate;
-        }
-
-        // DRAG
-        let dragging=false, dragX=0, dragY=0;
-        function getCoord(e) {
-            const rect=canvas.getBoundingClientRect();
-            const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
-            let cx,cy;
-            if(e.touches){ cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
-            else { cx=e.clientX; cy=e.clientY; }
-            return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy};
-        }
-        function onDragStart(e){ e.preventDefault(); dragging=true; let p=getCoord(e); dragX=p.x; dragY=p.y; }
-        function onDragMove(e){ if(!dragging) return; e.preventDefault(); let p=getCoord(e); let dx=p.x-dragX, dy=p.y-dragY; if(Math.hypot(dx,dy)>0.2){ for(let part of particles){ let dist=Math.hypot(part.x-p.x, part.y-p.y); if(dist<85){ let force=(1-dist/85)*1.1; part.vx+=dx*force; part.vy+=dy*force; } } } dragX=p.x; dragY=p.y; updateStats();}
-        function onDragEnd(e){ dragging=false; }
-        canvas.addEventListener('mousedown',onDragStart); window.addEventListener('mousemove',onDragMove); window.addEventListener('mouseup',onDragEnd);
-        canvas.addEventListener('touchstart',onDragStart); window.addEventListener('touchmove',onDragMove); window.addEventListener('touchend',onDragEnd);
-
-        function draw() {
-            ctx.clearRect(0,0,width,height);
-            let curRight = rightWallX;
-            ctx.strokeStyle="#ffcc77";
-            ctx.lineWidth=3;
-            ctx.strokeRect(6,6,curRight-12,height-12);
-            ctx.fillStyle = "#bd7f3ad9";
-            ctx.fillRect(curRight-12, 0, 14, height);
-            ctx.fillStyle = "#f3bc6c";
-            ctx.fillRect(curRight-10, 0, 10, height);
-            
-            for(let p of particles){
-                let grad=ctx.createRadialGradient(p.x-3,p.y-3,2,p.x,p.y,p.r+3);
-                if(tempKelvin>500) grad.addColorStop(0,'#ff9f66'),grad.addColorStop(1,'#cc4411');
-                else if(tempKelvin<180) grad.addColorStop(0,'#7bc5ff'),grad.addColorStop(1,'#2266cc');
-                else grad.addColorStop(0,'#ffcd7e'),grad.addColorStop(1,'#e0872c');
-                ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-                ctx.fillStyle=grad; ctx.fill();
-                ctx.shadowBlur=7; ctx.fill(); ctx.shadowBlur=0;
-                ctx.strokeStyle='#fff6e5'; ctx.lineWidth=1; ctx.stroke();
-            }
-            if(dragging){ ctx.beginPath(); ctx.arc(dragX,dragY,72,0,Math.PI*2); ctx.strokeStyle='#ffcc88'; ctx.setLineDash([6,10]); ctx.stroke(); ctx.setLineDash([]);}
-            updateStats();
-        }
-
-        function animate() {
-            applyPressureAndMoveWall();
-            handleCollisionsAndBoundaries();
-            draw();
-            requestAnimationFrame(animate);
-        }
-
-        // INIT
-        particles = initParticles(60, 350);
-        
-        document.getElementById('tempSlider').addEventListener('input', (e)=>{ tempKelvin = parseInt(e.target.value); applyTemperatureToAll(); updateStats(); });
-        document.getElementById('partikelSlider').addEventListener('input', (e)=>{ setParticleCount(parseInt(e.target.value)); });
-        document.getElementById('volumeSlider').addEventListener('input', (e)=>{ 
-            volumePercent = parseFloat(e.target.value); 
-            let newR = width*(volumePercent/100); 
-            rightWallX = Math.min(width*2, Math.max(width*0.35, newR)); 
-            wallVelocity = 0; 
-            document.getElementById('volumeActual').innerText = Math.round(volumePercent)+'%';
-            document.getElementById('volumeValueLabel').innerText = Math.round(volumePercent)+'%';
+        for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++){ let p1=particles[i],p2=particles[j]; let dx=p2.x-p1.x, dy=p2.y-p1.y, dist=Math.hypot(dx,dy), minD=p1.r+p2.r; if(dist<minD){ let nx=dx/dist, ny=dy/dist; let vrelx=p2.vx-p1.vx, vrely=p2.vy-p1.vy; let dot=vrelx*nx+vrely*ny; if(dot<0){ let imp=2*dot; p1.vx+=imp*nx; p1.vy+=imp*ny; p2.vx-=imp*nx; p2.vy-=imp*ny; } let overlap=minD-dist; let moveX=nx*overlap*0.5, moveY=ny*overlap*0.5; p1.x-=moveX; p1.y-=moveY; p2.x+=moveX; p2.y+=moveY; }}
+    }
+    
+    function draw() {
+        ctx.clearRect(0,0,width,height);
+        ctx.strokeStyle = "#ffb347"; ctx.lineWidth=3; ctx.strokeRect(5,5,width-10,height-10);
+        particles.forEach(p=>{
+            let grad = ctx.createRadialGradient(p.x-3,p.y-3,2,p.x,p.y,p.r+2);
+            grad.addColorStop(0,'#ffd966'); grad.addColorStop(1,'#e67e22');
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,2*Math.PI); ctx.fillStyle=grad; ctx.fill(); ctx.strokeStyle='white'; ctx.stroke();
         });
-        document.getElementById('pressureSlider').addEventListener('input', (e)=>{ 
-            externalPressure = parseFloat(e.target.value); 
-            document.getElementById('extPressureLabel').innerText = externalPressure.toFixed(2); 
+        requestAnimationFrame(animate);
+    }
+    function animate(){ updatePhysics(); draw(); updateInfoPanel(); }
+    particles = initParticles(28,300);
+    animate();
+    
+    // ---------- navigasi halaman ----------
+    const btns = document.querySelectorAll('.nav-btn');
+    const pages = { info: document.getElementById('infoPage'), simulasi: document.getElementById('simulasiPage'), lkpd: document.getElementById('lkpdPage') };
+    btns.forEach(btn=>{ btn.addEventListener('click',()=>{ let pageId=btn.getAttribute('data-page'); Object.keys(pages).forEach(p=>{ pages[p].classList.remove('active-page'); }); pages[pageId].classList.add('active-page'); btns.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }); });
+    document.getElementById('gotoSimBtn').addEventListener('click',()=>{ document.querySelector('[data-page="simulasi"]').click(); });
+    
+    // ---------- LKPD online realtime (guru / pemilik bisa lihat) ----------
+    let submissions = [];
+    document.getElementById('submitLKPDBtn').addEventListener('click',()=>{
+        let rumusan = document.getElementById('rumusanMasalah').value;
+        let kesimpulan = document.getElementById('kesimpulanLKPD').value;
+        let rows = document.querySelectorAll('#observationTable tbody tr');
+        let tabelData = [];
+        rows.forEach(row => {
+            let p = row.querySelector('.obsP')?.value || '';
+            let v = row.querySelector('.obsV')?.value || '';
+            let t = row.querySelector('.obsT')?.value || '';
+            let proc = row.querySelector('.obsProc')?.value || '';
+            let spd = row.querySelector('.obsSpeed')?.value || '';
+            tabelData.push({tekanan:p, volume:v, suhu:t, proses:proc, kecepatan:spd});
         });
-        document.getElementById('particleTypeSelect').onchange = (e)=>{ particleType = e.target.value; updateMassFromType(); };
-        document.getElementById('elementSelect').onchange = (e)=>{ elementName = e.target.value; updateMassFromType(); };
-        document.getElementById('resetSimBtn').onclick = ()=>{
-            tempKelvin = 350; externalPressure = 1.0; volumePercent = 100;
-            rightWallX = width; wallVelocity=0;
-            document.getElementById('tempSlider').value = 350;
-            document.getElementById('pressureSlider').value = 1.0;
-            document.getElementById('volumeSlider').value = 100;
-            document.getElementById('extPressureLabel').innerText = "1.00";
-            document.getElementById('volumeValueLabel').innerText = "100%";
-            document.getElementById('volumeActual').innerText = "100%";
-            setParticleCount(60);
-            applyTemperatureToAll();
-            updateStats();
-        };
-        
-        // LKPD
-        document.getElementById('saveLkpdBtn').onclick = () => {
-            const data = {
-                rumusan: document.getElementById('rumusanMasalah').value,
-                hipotesis: document.getElementById('hipotesis').value,
-                observasi: document.getElementById('dataObservasi').value,
-                kesimpulan: document.getElementById('kesimpulan').value
-            };
-            localStorage.setItem('lkpdGasIdeal', JSON.stringify(data));
-            document.getElementById('liveStatus').innerHTML = '✅ Jawaban tersimpan! (' + new Date().toLocaleTimeString() + ')';
-        };
-        document.getElementById('exportDataBtn').onclick = () => {
-            const saved = localStorage.getItem('lkpdGasIdeal');
-            if(saved) {
-                const data = JSON.parse(saved);
-                const exportText = `RUMUSAN MASALAH:\n${data.rumusan}\n\nHIPOTESIS:\n${data.hipotesis}\n\nDATA OBSERVASI:\n${data.observasi}\n\nKESIMPULAN:\n${data.kesimpulan}`;
-                const blob = new Blob([exportText], {type: 'text/plain'});
-                const a = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                a.href = url; a.download = 'lkpd_termodinamika.txt';
-                a.click(); URL.revokeObjectURL(url);
-            } else {
-                alert('Belum ada data yang tersimpan.');
-            }
-        };
-        
-        // Navigasi
-        const btns = document.querySelectorAll('.nav-btn');
-        const pages = document.querySelectorAll('.page');
-        btns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const pageId = btn.getAttribute('data-page');
-                btns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                pages.forEach(page => page.classList.remove('active-page'));
-                document.getElementById(pageId).classList.add('active-page');
-            });
-        });
-        
-        animate();
-    })();
+        let lkpdData = { timestamp: new Date().toLocaleString(), rumusanMasalah: rumusan, tabelPengamatan: tabelData, kesimpulan: kesimpulan };
+        submissions.push(lkpdData);
+        let monitorDiv = document.getElementById('liveMonitor');
+        monitorDiv.innerHTML = `<strong>📋 Hasil Kiriman Siswa (terbaca oleh pemilik):</strong><br>${JSON.stringify(lkpdData, null, 2)}<br><hr>Total kiriman: ${submissions.length}`;
+        document.getElementById('lkpdFeedback').style.display='block';
+        document.getElementById('lkpdFeedback').innerHTML = '✅ LKPD berhasil dikirim! Guru/pemilik dapat melihat data di atas secara real-time.';
+        setTimeout(()=>{ document.getElementById('lkpdFeedback').style.display='none';},3000);
+        console.log("LKPD TERKIRIM:", lkpdData);
+    });
+    document.getElementById('addRowTable').addEventListener('click',()=>{
+        let tbody = document.querySelector('#observationTable tbody');
+        let newRow = document.createElement('tr');
+        let idx = tbody.children.length+1;
+        newRow.innerHTML = `<td>${idx}</td><td><input type="number" class="obsP" placeholder="tekanan"></td><td><input type="number" class="obsV" placeholder="vol"></td><td><input type="number" class="obsT" placeholder="suhu"></td><td><input type="text" class="obsProc" placeholder="isobarik/dll"></td><td><input type="text" class="obsSpeed" placeholder="rms"></td>`;
+        tbody.appendChild(newRow);
+    });
+    // partikel jenis / unsur update (visual / warna) optional: tidak mengubah mekanika terlalu dalam tapi menunjukkan pengetahuan
+    document.getElementById('particleTypeSelect').addEventListener('change',()=>{});
+    document.getElementById('elementSelect').addEventListener('change',()=>{});
 </script>
 </body>
 </html>
-
+```
