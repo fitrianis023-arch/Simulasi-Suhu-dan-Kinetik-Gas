@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>TermoXplorer | Simulasi Gas Ideal + 3 LKPD Digital</title>
+    <title>TermoXplorer | Simulasi Gas Ideal + Isobarik + 3 LKPD</title>
     <style>
         * {
             margin: 0;
@@ -120,6 +120,30 @@
             height: 6px;
             border-radius: 10px;
             background: linear-gradient(90deg, #2c7da0, #ffb347);
+        }
+        .mode-selector {
+            background: #1e2f44;
+            border-radius: 60px;
+            padding: 8px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .mode-btn {
+            flex: 1;
+            background: #2c4b6e;
+            border: none;
+            padding: 8px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .mode-btn.active-mode {
+            background: #ffaa33;
+            color: #0e1a2a;
+            box-shadow: 0 0 8px #ffaa66;
         }
         .stats-grid {
             display: grid;
@@ -262,9 +286,6 @@
             border-left: 6px solid #ff9f2e;
             color: #1e3a5f;
         }
-        .tujuan-card strong {
-            color: #c05a0e;
-        }
         .field-group {
             margin-bottom: 22px;
         }
@@ -346,7 +367,6 @@
         <button class="nav-btn" data-page="lkpd">📝 LKPD DIGITAL (3 Lembar)</button>
     </div>
 
-    <!-- HALAMAN SIMULASI -->
     <div id="simulasi" class="page active-page">
         <div class="sim-card">
             <div class="canvas-container">
@@ -358,14 +378,23 @@
                     <div class="slider-group">
                         <label>🔘 Volume <span id="volumeValueLabel">2.00 L</span></label>
                         <input type="range" id="volumeSlider" min="0.5" max="4.0" value="2.0" step="0.05">
-                        <p class="warning-info">★ Ubah volume → tekanan otomatis berubah</p>
+                        <p class="warning-info">★ Pada mode isobarik, volume akan otomatis menyesuaikan</p>
                     </div>
                 </div>
                 <div class="ctrl-panel">
-                    <h3>⚙️ TEKANAN GAS (Terbaca Otomatis)</h3>
+                    <h3>⚙️ TEKANAN GAS</h3>
+                    <div class="mode-selector">
+                        <button id="modeAutoBtn" class="mode-btn active-mode">📈 Otomatis (PV=nRT)</button>
+                        <button id="ModeIsobarikBtn" class="mode-btn">⚖️ Isobarik (Tekanan Tetap)</button>
+                    </div>
+                    <div class="slider-group" id="pressureSliderGroup">
+                        <label>🎛️ Tekanan Tetap (Isobarik) <span id="fixedPressureLabel">1.00</span> atm</label>
+                        <input type="range" id="fixedPressureSlider" min="0.3" max="3.0" value="1.0" step="0.02" disabled>
+                        <p class="warning-info">★ Mode isobarik: tekanan dijaga konstan, volume menyesuaikan</p>
+                    </div>
                     <div class="slider-group">
-                        <label>🎛️ Tekanan Gas <span id="pressureDisplay">1.00</span> atm</label>
-                        <p class="warning-info">★ Tekanan dihitung dari (n × T) / V (PV = nRT)</p>
+                        <label>📊 Tekanan Aktual <span id="pressureDisplay">1.00</span> atm</label>
+                        <p class="warning-info">★ Mode otomatis: tekanan berubah sesuai PV=nRT</p>
                     </div>
                 </div>
                 <div class="ctrl-panel">
@@ -373,12 +402,10 @@
                     <div class="slider-group">
                         <label>🔥 Suhu (K) <span id="tempDisplay">350 K</span></label>
                         <input type="range" id="tempSlider" min="100" max="800" value="350" step="5">
-                        <p class="warning-info">★ Ubah suhu → tekanan dan kecepatan partikel berubah</p>
                     </div>
                     <div class="slider-group">
                         <label>🧪 Jumlah Partikel <span id="partCountShow">60</span> (max 200)</label>
                         <input type="range" id="partikelSlider" min="10" max="200" value="60" step="5">
-                        <p class="warning-info">★ Ubah jumlah partikel → tekanan berubah</p>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap:wrap;">
                         <select id="particleTypeSelect">
@@ -410,14 +437,16 @@
                     <div>🚗 Ban Mobil Panas : Suhu ↑ → Tekanan ↑</div>
                     <div>💨 Semprotan Deodoran : Gas memuai cepat</div>
                     <div>🍲 Panci Presto : Volume tetap, suhu & tekanan naik</div>
-                    <div>🎈 Balon Udara Panas : Pemuaian gas karena suhu</div>
-                    <div>💉 Jarum Suntik : Tekan piston → volume mengecil → tekanan naik</div>
+                    <div>🎈 Balon Udara Panas : Isobarik (tekanan tetap) → volume memuai</div>
+                    <div>💉 Jarum Suntik : Volume mengecil → tekanan naik</div>
+                </div>
+                <div style="margin-top: 10px; background:#ffaa3322; padding:6px; border-radius:30px; text-align:center;">
+                    💡 <strong>Mode Isobarik</strong>: Tekanan dijaga tetap, volume otomatis menyesuaikan jika suhu atau jumlah partikel berubah.
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- HALAMAN MATERI -->
     <div id="materi" class="page">
         <div class="materi-card">
             <h2 style="color:#ffcd7e;">📘 Termodinamika & Gas Ideal (Kurikulum Merdeka)</h2>
@@ -427,21 +456,20 @@
                     <div class="rumus-box"><strong>PV = nRT</strong><br>P = Tekanan (atm), V = Volume (Liter), n = jumlah mol, R = 0.082 L·atm/(mol·K), T = Suhu (Kelvin)</div>
                     <h3>⚙️ Proses Termodinamika</h3>
                     <ul style="margin-left: 1.2rem; line-height: 1.7;">
-                        <li><strong>Isobarik</strong> (Tekanan Tetap) → V₁/T₁ = V₂/T₂</li>
+                        <li><strong>Isobarik</strong> (Tekanan Tetap) → V₁/T₁ = V₂/T₂, V ∝ n</li>
                         <li><strong>Isokhorik</strong> (Volume Tetap) → P₁/T₁ = P₂/T₂</li>
                         <li><strong>Isotermal</strong> (Suhu Tetap) → P₁V₁ = P₂V₂ (Hukum Boyle)</li>
                     </ul>
                 </div>
                 <div style="flex:1; background:#00000033; border-radius: 1.5rem; padding: 1.2rem;">
                     <h3>🔬 Penerapan Nyata</h3>
-                    <p>✔️ Kulkas & AC ✔️ Mesin Kendaraan ✔️ Pernapasan</p>
+                    <p>✔️ Kulkas & AC ✔️ Mesin Kendaraan ✔️ Pernapasan ✔️ Balon Udara Panas (Isobarik)</p>
                     <div class="rumus-box">💡 <strong>Energi Dalam:</strong> ΔU = (3/2)nRΔT (mono) atau (5/2)nRΔT (di)</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- HALAMAN LKPD -->
     <div id="lkpd" class="page">
         <div class="lkpd-section-wrapper">
             <div class="tombol-lkpd-nav">
@@ -449,89 +477,61 @@
                 <button class="btn-lkpd" data-lkpd="lkpd2">🌡️ LKPD 2 : Hukum Charles</button>
                 <button class="btn-lkpd" data-lkpd="lkpd3">⚡ LKPD 3 : Gas Ideal & Energi</button>
             </div>
-
-            <!-- LKPD 1 -->
-            <div id="lkpd1" class="lkpd-page active-lkpd-page">
-                <div class="sheet-card">
-                    <div class="tujuan-card">
-                        <strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara <strong>Tekanan (P) dan Volume (V)</strong> gas dalam ruang tertutup pada suhu tetap.
-                    </div>
-                    <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm1" rows="2" placeholder="Bagaimana pengaruh perubahan volume (Liter) terhadap tekanan gas jika suhu dijaga konstan?"></textarea></div>
-                    <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip1" rows="2" placeholder="Jika volume diperkecil, maka tekanan akan ... karena ..."></textarea></div>
-                    <div class="field-group"><label>📊 Tabel Pengamatan</label>
-                        <div class="tabel-observasi"><table id="tabel1"><thead><tr><th>No</th><th>Volume (Liter)</th><th>Tekanan (atm)</th><th>Hasil Kali P×V</th></tr></thead><tbody>
-                            <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="2.0" id="t1_v1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali1"></td></tr>
-                            <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="1.5" id="t1_v2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali2"></td></tr>
-                            <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="1.0" id="t1_v3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali3"></td></tr>
-                        </tbody></table></div>
-                    </div>
-                    <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis1" rows="3"></textarea></div>
-                    <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan1" rows="3"></textarea></div>
-                    <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan1" rows="2"></textarea></div>
-                    <button class="btn-simpan-lkpd" data-save="lkpd1">💾 Simpan LKPD 1</button>
-                    <div class="info-guru" id="statusGuru1">Belum disimpan.</div>
-                </div>
-            </div>
-
-            <!-- LKPD 2 -->
-            <div id="lkpd2" class="lkpd-page">
-                <div class="sheet-card">
-                    <div class="tujuan-card">
-                        <strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara <strong>Volume (V) dan Suhu (T)</strong> gas dalam ruang tertutup pada tekanan tetap.
-                    </div>
-                    <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm2" rows="2"></textarea></div>
-                    <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip2" rows="2"></textarea></div>
-                    <div class="field-group"><label>📊 Tabel Pengamatan</label>
-                        <div class="tabel-observasi"><table id="tabel2"><thead><tr><th>No</th><th>Suhu (K)</th><th>Volume (Liter)</th><th>Perbandingan V/T</th></tr></thead><tbody>
-                            <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="300" id="t2_s1"></td><td class="editable-cell"><input type="text" placeholder="2.0" id="t2_v1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio1"></td></tr>
-                            <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="450" id="t2_s2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_v2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio2"></td></tr>
-                            <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="600" id="t2_s3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_v3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio3"></td></tr>
-                        </tbody></table></div>
-                    </div>
-                    <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis2" rows="3"></textarea></div>
-                    <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan2" rows="3"></textarea></div>
-                    <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan2" rows="2"></textarea></div>
-                    <button class="btn-simpan-lkpd" data-save="lkpd2">💾 Simpan LKPD 2</button>
-                    <div class="info-guru" id="statusGuru2">Belum disimpan.</div>
-                </div>
-            </div>
-
-            <!-- LKPD 3 -->
-            <div id="lkpd3" class="lkpd-page">
-                <div class="sheet-card">
-                    <div class="tujuan-card">
-                        <strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara <strong>Tekanan (P), Volume (V), Suhu (T), dan jumlah partikel (n)</strong> serta hubungannya dengan Energi Kinetik Gas.
-                    </div>
-                    <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm3" rows="2"></textarea></div>
-                    <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip3" rows="2"></textarea></div>
-                    <div class="field-group"><label>📊 Tabel Pengamatan</label>
-                        <div class="tabel-observasi"><table id="tabel3"><thead><tr><th>Eksp</th><th>Jumlah Partikel</th><th>Suhu (K)</th><th>Tekanan (atm)</th><th>Energi Kinetik</th><th>PV/(nT)</th></tr></thead><tbody>
-                            <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="40" id="t3_n1"></td><td class="editable-cell"><input type="text" placeholder="300" id="t3_t1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const1"></td></tr>
-                            <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="80" id="t3_n2"></td><td class="editable-cell"><input type="text" placeholder="450" id="t3_t2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const2"></td></tr>
-                            <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="120" id="t3_n3"></td><td class="editable-cell"><input type="text" placeholder="600" id="t3_t3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const3"></td></tr>
-                        </tbody></table></div>
-                    </div>
-                    <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis3" rows="3"></textarea></div>
-                    <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan3" rows="3"></textarea></div>
-                    <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan3" rows="2"></textarea></div>
-                    <div class="flex-buttons"><button class="btn-simpan-lkpd" data-save="lkpd3">💾 Simpan LKPD 3</button><button id="exportAllGuru" class="btn-simpan-lkpd btn-ekspor-semua">📎 Ekspor Semua Jawaban</button></div>
-                    <div class="info-guru" id="statusGuru3">Data tersimpan lokal.</div>
-                </div>
-            </div>
+            <div id="lkpd1" class="lkpd-page active-lkpd-page"><div class="sheet-card"><div class="tujuan-card"><strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara <strong>Tekanan (P) dan Volume (V)</strong> gas dalam ruang tertutup pada suhu tetap.</div>
+                <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm1" rows="2"></textarea></div>
+                <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip1" rows="2"></textarea></div>
+                <div class="field-group"><label>📊 Tabel Pengamatan</label><div class="tabel-observasi"><table id="tabel1"><thead><tr><th>No</th><th>Volume (L)</th><th>Tekanan (atm)</th><th>P×V</th></tr></thead><tbody>
+                <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="2.0" id="t1_v1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali1"></td></tr>
+                <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="1.5" id="t1_v2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali2"></td></tr>
+                <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="1.0" id="t1_v3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_p3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t1_kali3"></td></tr>
+                </tbody></table></div></div>
+                <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis1" rows="3"></textarea></div>
+                <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan1" rows="3"></textarea></div>
+                <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan1" rows="2"></textarea></div>
+                <button class="btn-simpan-lkpd" data-save="lkpd1">💾 Simpan LKPD 1</button><div class="info-guru" id="statusGuru1">Belum disimpan.</div>
+            </div></div>
+            <div id="lkpd2" class="lkpd-page"><div class="sheet-card"><div class="tujuan-card"><strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara <strong>Volume (V) dan Suhu (T)</strong> gas pada tekanan tetap (isobarik).</div>
+                <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm2" rows="2"></textarea></div>
+                <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip2" rows="2"></textarea></div>
+                <div class="field-group"><label>📊 Tabel Pengamatan</label><div class="tabel-observasi"><table id="tabel2"><thead><tr><th>No</th><th>Suhu (K)</th><th>Volume (L)</th><th>V/T</th></tr></thead><tbody>
+                <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="300" id="t2_s1"></td><td class="editable-cell"><input type="text" placeholder="2.0" id="t2_v1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio1"></td></tr>
+                <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="450" id="t2_s2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_v2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio2"></td></tr>
+                <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="600" id="t2_s3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_v3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t2_ratio3"></td></tr>
+                </tbody></table></div></div>
+                <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis2" rows="3"></textarea></div>
+                <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan2" rows="3"></textarea></div>
+                <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan2" rows="2"></textarea></div>
+                <button class="btn-simpan-lkpd" data-save="lkpd2">💾 Simpan LKPD 2</button><div class="info-guru" id="statusGuru2">Belum disimpan.</div>
+            </div></div>
+            <div id="lkpd3" class="lkpd-page"><div class="sheet-card"><div class="tujuan-card"><strong>🎯 Tujuan:</strong> Peserta didik mampu mengetahui hubungan antara Tekanan (P), Volume (V), Suhu (T), dan jumlah partikel (n).</div>
+                <div class="field-group"><label>❓ Rumusan Masalah</label><textarea id="rm3" rows="2"></textarea></div>
+                <div class="field-group"><label>🧪 Hipotesis</label><textarea id="hip3" rows="2"></textarea></div>
+                <div class="field-group"><label>📊 Tabel Pengamatan</label><div class="tabel-observasi"><table id="tabel3"><thead><tr><th>Eksp</th><th>Jml Partikel</th><th>Suhu (K)</th><th>Tekanan (atm)</th><th>Energi Kinetik</th><th>PV/(nT)</th></tr></thead><tbody>
+                <tr><td>1</td><td class="editable-cell"><input type="text" placeholder="40" id="t3_n1"></td><td class="editable-cell"><input type="text" placeholder="300" id="t3_t1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e1"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const1"></td></tr>
+                <tr><td>2</td><td class="editable-cell"><input type="text" placeholder="80" id="t3_n2"></td><td class="editable-cell"><input type="text" placeholder="450" id="t3_t2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e2"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const2"></td></tr>
+                <tr><td>3</td><td class="editable-cell"><input type="text" placeholder="120" id="t3_n3"></td><td class="editable-cell"><input type="text" placeholder="600" id="t3_t3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_p3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_e3"></td><td class="editable-cell"><input type="text" placeholder="..." id="t3_const3"></td></tr>
+                </tbody></table></div></div>
+                <div class="field-group"><label>📈 Analisis Data</label><textarea id="analisis3" rows="3"></textarea></div>
+                <div class="field-group"><label>💬 Pembahasan</label><textarea id="pembahasan3" rows="3"></textarea></div>
+                <div class="field-group"><label>✅ Kesimpulan</label><textarea id="kesimpulan3" rows="2"></textarea></div>
+                <div class="flex-buttons"><button class="btn-simpan-lkpd" data-save="lkpd3">💾 Simpan LKPD 3</button><button id="exportAllGuru" class="btn-simpan-lkpd btn-ekspor-semua">📎 Ekspor Semua Jawaban</button></div>
+                <div class="info-guru" id="statusGuru3">Data tersimpan lokal.</div>
+            </div></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ======================== SIMULASI GAS (Tekanan Berubah Secara Proporsional) ========================
+    // ======================== SIMULASI GAS dengan Mode Isobarik ========================
     const canvas = document.getElementById('gasCanvas');
     const ctx = canvas.getContext('2d');
     let width = 1150, height = 520;
     canvas.width = width; canvas.height = height;
     let particles = [];
     
-    let temperature = 350;          // suhu dalam Kelvin
-    let volumeLiter = 2.0;          // volume dalam Liter (rentang 0.5 - 4.0 L)
+    let temperature = 350;
+    let volumeLiter = 2.0;
+    let particleCount = 60;
     let particleType = 'mono';
     let elementName = 'Helium';
     let massFactor = 1.0;
@@ -541,21 +541,51 @@
     let collisionRate = 0;
     const baseSpeedRef = 7.5;
     
-    // Hitung tekanan berdasarkan PV = nRT (n sebanding dengan jumlah partikel)
-    // Tekanan = (jumlah partikel / 60) × (suhu / 350) × (2.0 / volumeLiter) × 1.0
-    // Pada kondisi awal: partikel=60, suhu=350K, volume=2.0L → tekanan = 1.00 atm
-    function calculatePressure() {
-        let pressure = (particles.length / 60) * (temperature / 350) * (2.0 / volumeLiter);
-        // Koreksi kecil untuk jenis gas (diatomik sedikit lebih besar)
+    // Mode: 'auto' atau 'isobaric'
+    let currentMode = 'auto';  // auto: tekanan berubah, isobaric: tekanan tetap
+    let fixedPressure = 1.0;   // tekanan yang dijaga tetap pada mode isobarik
+    
+    function calculatePressureFromParams() {
+        let pressure = (particleCount / 60) * (temperature / 350) * (2.0 / volumeLiter);
         pressure = pressure * (massFactor > 1.5 ? 1.1 : 1.0);
         return Math.min(6.0, Math.max(0.1, pressure));
+    }
+    
+    // Pada mode isobarik, volume harus menyesuaikan agar tekanan = fixedPressure
+    function updateVolumeForIsobaric() {
+        // Rumus: P_target = (n/60)*(T/350)*(2/V) * faktor
+        // Maka V = (n/60)*(T/350)*2 / P_target * faktor
+        let targetVol = (particleCount / 60) * (temperature / 350) * 2.0 / fixedPressure;
+        targetVol = targetVol / (massFactor > 1.5 ? 1.1 : 1.0);
+        targetVol = Math.min(4.0, Math.max(0.5, targetVol));
+        if (Math.abs(volumeLiter - targetVol) > 0.02) {
+            volumeLiter = targetVol;
+            updateVolumeDisplay();
+            adjustParticlePositionsForVolume();
+        }
+    }
+    
+    function updateVolumeDisplay() {
+        document.getElementById('volumeActual').innerText = volumeLiter.toFixed(2);
+        document.getElementById('volumeValueLabel').innerHTML = volumeLiter.toFixed(2) + " L";
+        let percent = (volumeLiter - 0.5) / 3.5;
+        rightWallX = width * Math.min(1.0, Math.max(0.0, percent));
+        rightWallX = Math.min(width - 10, Math.max(70, rightWallX));
+    }
+    
+    function adjustParticlePositionsForVolume() {
+        let maxX = rightWallX;
+        for (let p of particles) {
+            if (p.x + p.r > maxX) p.x = maxX - p.r;
+            if (p.x - p.r < 0) p.x = p.r;
+        }
     }
     
     function getTargetSpeed() {
         return baseSpeedRef * Math.sqrt(temperature / 300) / Math.sqrt(massFactor);
     }
     
-    function applyTemperature() {
+    function applyTemperatureToParticles() {
         let targetSpeed = getTargetSpeed();
         for (let p of particles) {
             let currentSpeed = Math.hypot(p.vx, p.vy);
@@ -570,7 +600,6 @@
                 p.vy *= ratio;
             }
         }
-        updateStats();
     }
     
     function updateMassFactor() {
@@ -583,14 +612,13 @@
             else if (elementName === 'Nitrogen') massFactor = 2.33;
             else massFactor = 2.0;
         }
-        applyTemperature();
-        updateStats(); // update tekanan setelah mass factor berubah
+        applyTemperatureToParticles();
     }
     
     function initParticles(count) {
         let arr = [];
         let targetSpeed = getTargetSpeed();
-        let maxX = width * ((volumeLiter - 0.5) / 3.5);
+        let maxX = rightWallX;
         for (let i = 0; i < count; i++) {
             let x = Math.random() * (maxX - 14) + 7;
             let y = Math.random() * (height - 14) + 7;
@@ -605,7 +633,7 @@
         newCount = Math.min(200, Math.max(10, newCount));
         let cur = particles.length;
         let targetSpeed = getTargetSpeed();
-        let maxX = width * ((volumeLiter - 0.5) / 3.5);
+        let maxX = rightWallX;
         if (newCount > cur) {
             for (let i = 0; i < newCount - cur; i++) {
                 let x = Math.random() * (maxX - 14) + 7;
@@ -617,21 +645,12 @@
         } else if (newCount < cur) {
             particles.splice(newCount, cur - newCount);
         }
-        document.getElementById('partCountShow').innerText = particles.length;
-        updateStats();
-    }
-    
-    function updateVolume() {
-        let percent = (volumeLiter - 0.5) / 3.5;
-        rightWallX = width * Math.min(1.0, Math.max(0.0, percent));
-        rightWallX = Math.min(width - 10, Math.max(70, rightWallX));
+        particleCount = particles.length;
+        document.getElementById('partCountShow').innerText = particleCount;
         
-        for (let p of particles) {
-            if (p.x + p.r > rightWallX) { p.x = rightWallX - p.r; p.vx = -Math.abs(p.vx) * 0.9; }
-            if (p.x - p.r < 0) { p.x = p.r; p.vx = Math.abs(p.vx) * 0.9; }
+        if (currentMode === 'isobaric') {
+            updateVolumeForIsobaric();
         }
-        document.getElementById('volumeActual').innerText = volumeLiter.toFixed(2);
-        document.getElementById('volumeValueLabel').innerHTML = volumeLiter.toFixed(2) + " L";
         updateStats();
     }
     
@@ -676,7 +695,7 @@
         let avgEk = 0.5 * massFactor * avgSpeed * avgSpeed;
         document.getElementById('ekStat').innerText = avgEk.toFixed(1);
         
-        let pressure = calculatePressure();
+        let pressure = calculatePressureFromParams();
         document.getElementById('pressureActual').innerHTML = pressure.toFixed(2);
         document.getElementById('pressureDisplay').innerHTML = pressure.toFixed(2);
         document.getElementById('tempDisplay').innerText = Math.round(temperature) + " K";
@@ -708,48 +727,111 @@
     function animate() { handleCollisions(); draw(); requestAnimationFrame(animate); }
     
     particles = initParticles(60);
+    particleCount = 60;
     
-    document.getElementById('tempSlider').addEventListener('input', (e) => { temperature = parseInt(e.target.value); applyTemperature(); updateStats(); });
-    document.getElementById('partikelSlider').addEventListener('input', (e) => { setParticleCount(parseInt(e.target.value)); updateStats(); });
-    document.getElementById('volumeSlider').addEventListener('input', (e) => { volumeLiter = parseFloat(e.target.value); updateVolume(); updateStats(); });
-    document.getElementById('particleTypeSelect').onchange = (e) => { particleType = e.target.value; updateMassFactor(); updateStats(); };
-    document.getElementById('elementSelect').onchange = (e) => { elementName = e.target.value; updateMassFactor(); updateStats(); };
-    document.getElementById('resetSimBtn').onclick = () => {
-        temperature = 350; volumeLiter = 2.0; particleType = 'mono'; elementName = 'Helium';
-        document.getElementById('tempSlider').value = 350; document.getElementById('volumeSlider').value = 2.0;
-        document.getElementById('partikelSlider').value = 60; document.getElementById('particleTypeSelect').value = 'mono';
-        document.getElementById('elementSelect').value = 'Helium';
-        updateMassFactor(); updateVolume(); setParticleCount(60); applyTemperature(); updateStats();
+    // Event Listeners
+    document.getElementById('tempSlider').addEventListener('input', (e) => { 
+        temperature = parseInt(e.target.value); 
+        applyTemperatureToParticles(); 
+        if (currentMode === 'isobaric') updateVolumeForIsobaric();
+        updateStats(); 
+    });
+    document.getElementById('partikelSlider').addEventListener('input', (e) => { 
+        setParticleCount(parseInt(e.target.value)); 
+    });
+    document.getElementById('volumeSlider').addEventListener('input', (e) => { 
+        if (currentMode === 'auto') {
+            volumeLiter = parseFloat(e.target.value);
+            updateVolumeDisplay();
+            adjustParticlePositionsForVolume();
+            updateStats();
+        }
+    });
+    document.getElementById('particleTypeSelect').onchange = (e) => { 
+        particleType = e.target.value; 
+        updateMassFactor(); 
+        if (currentMode === 'isobaric') updateVolumeForIsobaric();
+        updateStats(); 
     };
+    document.getElementById('elementSelect').onchange = (e) => { 
+        elementName = e.target.value; 
+        updateMassFactor(); 
+        if (currentMode === 'isobaric') updateVolumeForIsobaric();
+        updateStats(); 
+    };
+    document.getElementById('fixedPressureSlider').addEventListener('input', (e) => {
+        fixedPressure = parseFloat(e.target.value);
+        document.getElementById('fixedPressureLabel').innerText = fixedPressure.toFixed(2);
+        if (currentMode === 'isobaric') {
+            updateVolumeForIsobaric();
+            updateStats();
+        }
+    });
+    
+    // Mode switching
+    const modeAutoBtn = document.getElementById('modeAutoBtn');
+    const modeIsobaricBtn = document.getElementById('ModeIsobarikBtn');
+    const fixedSlider = document.getElementById('fixedPressureSlider');
+    const volumeSlider = document.getElementById('volumeSlider');
+    
+    modeAutoBtn.addEventListener('click', () => {
+        currentMode = 'auto';
+        modeAutoBtn.classList.add('active-mode');
+        modeIsobaricBtn.classList.remove('active-mode');
+        fixedSlider.disabled = true;
+        volumeSlider.disabled = false;
+        updateStats();
+    });
+    modeIsobaricBtn.addEventListener('click', () => {
+        currentMode = 'isobaric';
+        modeAutoBtn.classList.remove('active-mode');
+        modeIsobaricBtn.classList.add('active-mode');
+        fixedSlider.disabled = false;
+        volumeSlider.disabled = true;
+        updateVolumeForIsobaric();
+        updateStats();
+    });
+    
+    document.getElementById('resetSimBtn').onclick = () => {
+        temperature = 350;
+        volumeLiter = 2.0;
+        particleType = 'mono';
+        elementName = 'Helium';
+        fixedPressure = 1.0;
+        currentMode = 'auto';
+        document.getElementById('tempSlider').value = 350;
+        document.getElementById('volumeSlider').value = 2.0;
+        document.getElementById('partikelSlider').value = 60;
+        document.getElementById('particleTypeSelect').value = 'mono';
+        document.getElementById('elementSelect').value = 'Helium';
+        document.getElementById('fixedPressureSlider').value = 1.0;
+        document.getElementById('fixedPressureLabel').innerText = "1.00";
+        modeAutoBtn.classList.add('active-mode');
+        modeIsobaricBtn.classList.remove('active-mode');
+        fixedSlider.disabled = true;
+        volumeSlider.disabled = false;
+        updateMassFactor();
+        updateVolumeDisplay();
+        adjustParticlePositionsForVolume();
+        setParticleCount(60);
+        applyTemperatureToParticles();
+        updateStats();
+    };
+    
     animate();
     
-    // ============= LKPD SIMPAN & LOAD =============
+    // LKPD Save/Load (sama seperti sebelumnya, disingkat)
     function saveLkpd(lkpdId){
         if(lkpdId === 'lkpd1'){
-            const data = { rumusan: document.getElementById('rm1').value, hipotesis: document.getElementById('hip1').value, 
-                tabel: { v1: document.getElementById('t1_v1')?.value, p1: document.getElementById('t1_p1')?.value, kali1: document.getElementById('t1_kali1')?.value,
-                         v2: document.getElementById('t1_v2')?.value, p2: document.getElementById('t1_p2')?.value, kali2: document.getElementById('t1_kali2')?.value,
-                         v3: document.getElementById('t1_v3')?.value, p3: document.getElementById('t1_p3')?.value, kali3: document.getElementById('t1_kali3')?.value },
-                analisis: document.getElementById('analisis1').value, pembahasan: document.getElementById('pembahasan1').value, 
-                kesimpulan: document.getElementById('kesimpulan1').value, timestamp: new Date().toISOString() };
+            const data = { rumusan: document.getElementById('rm1').value, hipotesis: document.getElementById('hip1').value, tabel: { v1: document.getElementById('t1_v1')?.value, p1: document.getElementById('t1_p1')?.value, kali1: document.getElementById('t1_kali1')?.value, v2: document.getElementById('t1_v2')?.value, p2: document.getElementById('t1_p2')?.value, kali2: document.getElementById('t1_kali2')?.value, v3: document.getElementById('t1_v3')?.value, p3: document.getElementById('t1_p3')?.value, kali3: document.getElementById('t1_kali3')?.value }, analisis: document.getElementById('analisis1').value, pembahasan: document.getElementById('pembahasan1').value, kesimpulan: document.getElementById('kesimpulan1').value, timestamp: new Date().toISOString() };
             localStorage.setItem('LKPD_GAS_1', JSON.stringify(data));
             document.getElementById('statusGuru1').innerHTML = `✅ Tersimpan (${new Date().toLocaleTimeString()})`;
         } else if(lkpdId === 'lkpd2'){
-            const data = { rumusan: document.getElementById('rm2').value, hipotesis: document.getElementById('hip2').value,
-                tabel: { s1: document.getElementById('t2_s1')?.value, v1: document.getElementById('t2_v1')?.value, ratio1: document.getElementById('t2_ratio1')?.value,
-                         s2: document.getElementById('t2_s2')?.value, v2: document.getElementById('t2_v2')?.value, ratio2: document.getElementById('t2_ratio2')?.value,
-                         s3: document.getElementById('t2_s3')?.value, v3: document.getElementById('t2_v3')?.value, ratio3: document.getElementById('t2_ratio3')?.value },
-                analisis: document.getElementById('analisis2').value, pembahasan: document.getElementById('pembahasan2').value,
-                kesimpulan: document.getElementById('kesimpulan2').value, timestamp: new Date().toISOString() };
+            const data = { rumusan: document.getElementById('rm2').value, hipotesis: document.getElementById('hip2').value, tabel: { s1: document.getElementById('t2_s1')?.value, v1: document.getElementById('t2_v1')?.value, ratio1: document.getElementById('t2_ratio1')?.value, s2: document.getElementById('t2_s2')?.value, v2: document.getElementById('t2_v2')?.value, ratio2: document.getElementById('t2_ratio2')?.value, s3: document.getElementById('t2_s3')?.value, v3: document.getElementById('t2_v3')?.value, ratio3: document.getElementById('t2_ratio3')?.value }, analisis: document.getElementById('analisis2').value, pembahasan: document.getElementById('pembahasan2').value, kesimpulan: document.getElementById('kesimpulan2').value, timestamp: new Date().toISOString() };
             localStorage.setItem('LKPD_GAS_2', JSON.stringify(data));
             document.getElementById('statusGuru2').innerHTML = `✅ Tersimpan (${new Date().toLocaleTimeString()})`;
         } else if(lkpdId === 'lkpd3'){
-            const data = { rumusan: document.getElementById('rm3').value, hipotesis: document.getElementById('hip3').value,
-                tabel: { n1: document.getElementById('t3_n1')?.value, t1: document.getElementById('t3_t1')?.value, p1: document.getElementById('t3_p1')?.value, e1: document.getElementById('t3_e1')?.value, const1: document.getElementById('t3_const1')?.value,
-                         n2: document.getElementById('t3_n2')?.value, t2: document.getElementById('t3_t2')?.value, p2: document.getElementById('t3_p2')?.value, e2: document.getElementById('t3_e2')?.value, const2: document.getElementById('t3_const2')?.value,
-                         n3: document.getElementById('t3_n3')?.value, t3: document.getElementById('t3_t3')?.value, p3: document.getElementById('t3_p3')?.value, e3: document.getElementById('t3_e3')?.value, const3: document.getElementById('t3_const3')?.value },
-                analisis: document.getElementById('analisis3').value, pembahasan: document.getElementById('pembahasan3').value,
-                kesimpulan: document.getElementById('kesimpulan3').value, timestamp: new Date().toISOString() };
+            const data = { rumusan: document.getElementById('rm3').value, hipotesis: document.getElementById('hip3').value, tabel: { n1: document.getElementById('t3_n1')?.value, t1: document.getElementById('t3_t1')?.value, p1: document.getElementById('t3_p1')?.value, e1: document.getElementById('t3_e1')?.value, const1: document.getElementById('t3_const1')?.value, n2: document.getElementById('t3_n2')?.value, t2: document.getElementById('t3_t2')?.value, p2: document.getElementById('t3_p2')?.value, e2: document.getElementById('t3_e2')?.value, const2: document.getElementById('t3_const2')?.value, n3: document.getElementById('t3_n3')?.value, t3: document.getElementById('t3_t3')?.value, p3: document.getElementById('t3_p3')?.value, e3: document.getElementById('t3_e3')?.value, const3: document.getElementById('t3_const3')?.value }, analisis: document.getElementById('analisis3').value, pembahasan: document.getElementById('pembahasan3').value, kesimpulan: document.getElementById('kesimpulan3').value, timestamp: new Date().toISOString() };
             localStorage.setItem('LKPD_GAS_3', JSON.stringify(data));
             document.getElementById('statusGuru3').innerHTML = `✅ Tersimpan (${new Date().toLocaleTimeString()})`;
         }
