@@ -141,7 +141,7 @@
         input[type="range"]:disabled::-webkit-slider-thumb { background: #6b7280; cursor: not-allowed; }
         .value-badge { background: #0f172a; padding: 4px 10px; border-radius: 2rem; font-size: 0.8rem; font-weight: 500; color: #facc15; display: inline-block; margin-top: 6px; }
         
-        /* Pilihan jenis partikel - DIPERJELAS WARNA TOMBOL */
+        /* Pilihan jenis partikel */
         .partikel-selector {
             background: rgba(0, 0, 0, 0.5);
             border-radius: 1.5rem;
@@ -162,37 +162,31 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            padding: 0.5rem 1.2rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.4rem 1rem;
             border-radius: 2rem;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid rgba(255,255,220,0.5);
-            font-weight: 600;
-            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .partikel-option:hover {
-            background: rgba(250, 204, 21, 0.3);
+            background: rgba(250, 204, 21, 0.2);
             border-color: #facc15;
-            transform: scale(1.02);
         }
         .partikel-option.active {
-            background: #2d6a4f;
+            background: rgba(250, 204, 21, 0.3);
             border-color: #facc15;
-            box-shadow: 0 0 10px rgba(250,204,21,0.5);
-            color: #ffffff;
+            box-shadow: 0 0 8px rgba(250,204,21,0.3);
         }
         .partikel-option input {
             margin-right: 4px;
             cursor: pointer;
-            accent-color: #facc15;
         }
         .unsur-select {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #facc15;
             border-radius: 2rem;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
             color: #facc15;
             font-weight: 600;
             cursor: pointer;
@@ -617,7 +611,7 @@
                     </div>
                 </div>
                 <div style="margin-top: 2rem;">
-                    <h4 style="color:#facc15;">⚡ Energi Kinetik Rata-rata & Kecepatan RMS</h4>
+                    <h4 style="color:#facc15;">⚡ Energi Kinetik Rata-rata (Ek) & Kecepatan RMS</h4>
                     <p>Ek<sub>rata</sub> = (f/2) k T , untuk monoatomik f=3 ⇒ Ek = 3/2 kT. <br> Kecepatan RMS: v<sub>rms</sub> = √(3kT/m). Semakin tinggi suhu, semakin besar kecepatan dan energi kinetik.</p>
                     <div class="rumus" style="margin-top:0.5rem;">v<sub>rms</sub> = √(3RT/M) , Ek<sub>total</sub> = (3/2)nRT (monoatomik)</div>
                     <div style="margin-top:1rem; background:#0f172a; border-radius:1rem; padding:0.8rem;">
@@ -740,7 +734,7 @@
                 </div>
                 
                 <div class="molecular-info">
-                    <div class="info-card"><i class="fas fa-bolt"></i><div class="info-label">ENERGI KINETIK RATA-RATA PER PARTIKEL</div><div class="info-value" id="kineticEnergy">${calculateAvgKineticEnergy()}</div><div class="info-unit">× 10⁻¹⁹ Joule</div></div>
+                    <div class="info-card"><i class="fas fa-bolt"></i><div class="info-label">ENERGI KINETIK</div><div class="info-value" id="kineticEnergy">${calculateAvgKineticEnergy()}</div><div class="info-unit">× 10⁻¹⁹ Joule</div></div>
                     <div class="info-card"><i class="fas fa-tachometer-alt"></i><div class="info-label">KECEPATAN RMS</div><div class="info-value" id="avgSpeed">${calculateRMSSpeed()}</div><div class="info-unit">meter/detik</div></div>
                     <div class="info-card"><i class="fas fa-hand-fist"></i><div class="info-label">TUMBUKAN / DETIK</div><div class="info-value" id="collisionRate">${calculateCollisionsPerSecond()}</div><div class="info-unit">kali per detik</div></div>
                 </div>
@@ -757,7 +751,7 @@
         html += `</div>`;
         root.innerHTML = html;
         
-        // ========== EVENT HANDLERS ==========
+        // ========== EVENT HANDLERS (tetap dipertahankan) ==========
         if(currentPage === "start") {
             const starBtn = document.getElementById("starButton");
             if(starBtn) starBtn.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
