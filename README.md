@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=DEVICE-WIDTH, initial-scale=1.0, user-scalable=no">
     <title>TermoLab | Simulasi Gas & LKPD Digital</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -222,6 +222,53 @@
             .observ-table input { font-size: 0.7rem; }
             .partikel-selector { flex-direction: column; align-items: stretch; }
         }
+
+        /* ---------- STYLE MATERI BARU ---------- */
+        .materi-container {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin-top: 0.5rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(250, 204, 21, 0.3);
+        }
+        .materi-container h3 {
+            color: #facc15;
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-left: 5px solid #facc15;
+            padding-left: 1rem;
+        }
+        .materi-container h4 {
+            color: #86efac;
+            margin: 1rem 0 0.4rem;
+            font-size: 1.2rem;
+        }
+        .materi-container .rumus {
+            background: #0f172a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 1.2rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #facc15;
+            display: inline-block;
+            margin: 0.5rem 0;
+            letter-spacing: 0.5px;
+            border: 1px solid #facc1544;
+        }
+        .materi-container p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .materi-highlight {
+            background: #2d3748;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 6px solid #facc15;
+        }
     </style>
 </head>
 <body>
@@ -391,7 +438,6 @@
         draw(ctx, warna) {
             ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
             ctx.fillStyle = warna; ctx.fill();
-            // efek highlight
             ctx.beginPath(); ctx.arc(this.x-1.5, this.y-1.5, this.radius-3, 0, Math.PI*2);
             ctx.fillStyle = 'rgba(255,255,200,0.5)'; ctx.fill();
         }
@@ -409,7 +455,6 @@
         particles = [];
         let radBase = (partikelJenis === 'monoatomik') ? 5 : 4.5;
         let sf = Math.sqrt(Math.max(0.01, temperature) / 400);
-        // faktor kecepatan berdasarkan unsur
         let unsurFaktor = 1.0;
         if (partikelJenis === 'monoatomik') {
             const unsur = unsurMonoatomik.find(u => u.kode === unsurTerpilih) || unsurMonoatomik[0];
@@ -486,7 +531,6 @@
         initParticlesSim();
         updateMolecularInfo();
         
-        // Update tampilan radio button dan dropdown
         const radioMono = document.getElementById('radioMono');
         const radioDi = document.getElementById('radioDi');
         if(radioMono) radioMono.checked = (jenis === 'monoatomik');
@@ -541,13 +585,35 @@
             </div>`;
         }
         else if(currentPage === "materi") {
-            html += `<div class="nav-buttons"><h2>📚 Materi Termodinamika</h2><button id="backHomeMateri" class="btn">🏠 Beranda</button></div>
-            <div style="background:rgba(0,0,0,0.6);border-radius:1.5rem;padding:1.5rem;">
-                <h3 style="color:#10b981;">🟢 Volume Tetap (Hukum Charles)</h3><p style="color:#cbd5e6;">P₁/T₁ = P₂/T₂ | Tekanan ∝ Suhu</p>
-                <h3 style="color:#3b82f6;">🔵 Tekanan Tetap (Hukum Gay-Lussac)</h3><p style="color:#cbd5e6;">V₁/T₁ = V₂/T₂ | Volume ∝ Suhu</p>
-                <h3 style="color:#f59e0b;">🟠 Suhu Tetap (Hukum Boyle)</h3><p style="color:#cbd5e6;">P₁V₁ = P₂V₂ | Tekanan ∝ 1/Volume</p>
+            // ========== MATERI LENGKAP ENERGI KINETIK, KECEPATAN, TUMBUKAN ==========
+            html += `<div class="nav-buttons"><h2>📚 Teori Kinetik Gas</h2><button id="backHomeMateri" class="btn">🏠 Beranda</button></div>
+            <div class="materi-container">
+                <div class="materi-highlight">
+                    <h4 style="color:#facc15; margin:0 0 4px 0;">🔬 Teori Dasar Gas Ideal</h4>
+                    <p>Gas terdiri atas partikel-partikel kecil yang bergerak acak, tidak ada gaya interaksi kecuali saat tumbukan lenting sempurna. Volume partikel diabaikan terhadap ruang.</p>
+                </div>
+                
+                <h3>⚡ 1. Energi Kinetik Rata-rata (Ek)</h3>
+                <p>Energi kinetik rata-rata partikel gas berbanding lurus dengan suhu mutlaknya. Dirumuskan sebagai:</p>
+                <div class="rumus">Ek = (f/2) · k · T</div>
+                <p>Dimana <strong>f</strong> = derajat kebebasan (3 untuk monoatomik, 5 untuk diatomik suhu sedang), <strong>k</strong> = konstanta Boltzmann (1,38×10⁻²³ J/K), <strong>T</strong> = suhu (Kelvin). Untuk gas monoatomik: <strong>Ek<sub>rata</sub> = (3/2) k T</strong>. Energi kinetik tidak bergantung pada jenis gas, hanya suhu!</p>
+                
+                <h3>🚀 2. Kecepatan Partikel Gas</h3>
+                <p>Kecepatan gas digambarkan dengan kecepatan rata-rata kuadrat (Root Mean Square / RMS). Rumus fundamental:</p>
+                <div class="rumus">v<sub>rms</sub> = √(3kT / m) &nbsp;&nbsp; atau &nbsp;&nbsp; v<sub>rms</sub> = √(3RT / M)</div>
+                <p>Dengan <strong>m</strong> = massa satu partikel (kg), <strong>M</strong> = massa molar (kg/mol), <strong>R</strong> = 8,314 J/(mol·K). Kecepatan RMS sebanding dengan akar suhu dan berbanding terbalik dengan akar massa partikel. Gas ringan (H₂, He) bergerak lebih cepat.</p>
+                
+                <h3>💥 3. Tumbukan Antarmolekul & Frekuensi Tumbukan</h3>
+                <p>Partikel gas senantiasa bertumbukan dengan dinding wadah (menimbulkan tekanan) dan antar partikel. Frekuensi tumbukan (z) bergantung pada rapat jumlah (N/V), diameter efektif (d), serta kecepatan rata-rata partikel. Rumus frekuensi tumbukan per molekul:</p>
+                <div class="rumus">z = √2 · π · d² · v<sub>rms</sub> · (N / V)</div>
+                <p>Jumlah total tumbukan per satuan waktu sangat besar, menandakan dinamika gas. Dalam simulasi, semakin tinggi suhu atau rapat partikel, semakin sering tumbukan terjadi.</p>
+                
+                <h3>📐 4. Hubungan Tekanan, Volume, dan Energi Kinetik</h3>
+                <p>Tekanan gas dapat dinyatakan sebagai: <span class="rumus" style="font-size:0.9rem;">P = (2/3) · (N/V) · Ek<sub>rata</sub></span>. Ini menghubungkan makroskopik (P) dengan mikroskopik (Ek). Dengan mempertahankan rumus sebelumnya: <strong>PV = nRT</strong> (gas ideal) serta <strong>Ek<sub>total</sub> = (3/2)nRT</strong> untuk monoatomik.</p>
+                <p>Untuk proses <strong>Volume Tetap</strong>: P₁/T₁ = P₂/T₂ (Hukum Charles). <strong>Tekanan Tetap</strong>: V₁/T₁ = V₂/T₂ (Gay-Lussac). <strong>Suhu Tetap</strong>: P₁V₁ = P₂V₂ (Boyle). Semua konsisten dengan teori kinetik gas.</p>
+                <div class="info-text" style="margin-top:12px;"><i class="fas fa-microchip"></i> Energi kinetik, kecepatan RMS, dan tumbukan divisualisasikan secara real-time pada halaman Simulasi!</div>
             </div>
-            <button id="backMateriPetunjuk" class="btn" style="margin-top:1rem;">← Kembali</button>`;
+            <button id="backMateriPetunjuk" class="btn" style="margin-top:1rem;">← Kembali ke Petunjuk</button>`;
         }
         else if(currentPage === "lkpd_menu") {
             html += `<div class="nav-buttons"><h2><i class="fas fa-pen-fancy"></i> Pilih Lembar Kerja Peserta Didik (LKPD)</h2><button id="backHomeLkpdMenu" class="btn">🏠 Beranda</button></div>
@@ -627,7 +693,6 @@
             let volDisabled = (activeProcess === 'volume_tetap') ? 'disabled' : '';
             let tempDisabled = (activeProcess === 'suhu_tetap') ? 'disabled' : '';
             
-            // Opsi unsur untuk dropdown
             let unsurOptions = '';
             if (partikelJenis === 'monoatomik') {
                 unsurOptions = unsurMonoatomik.map(u => `<option value="${u.kode}" ${u.kode === unsurTerpilih ? 'selected' : ''}>${u.nama}</option>`).join('');
@@ -649,7 +714,6 @@
                     <div class="param-pod"><label><i class="fas fa-thermometer-half"></i> Suhu (K)</label><input type="range" id="tempSlider" min="0" max="800" step="5" value="${temperature}" ${tempDisabled}><span id="tempValue" class="value-badge">${Math.round(temperature)} K</span></div>
                 </div>
                 
-                <!-- PEMILIH JENIS PARTIKEL DAN UNSUR -->
                 <div class="partikel-selector">
                     <label><i class="fas fa-atom"></i> Jenis Partikel:</label>
                     <div class="partikel-option ${partikelJenis === 'monoatomik' ? 'active' : ''}" onclick="window.changePartikelJenis('monoatomik')">
@@ -681,8 +745,7 @@
         html += `</div>`;
         root.innerHTML = html;
         
-        // ========== EVENT HANDLERS ==========
-        
+        // ========== EVENT HANDLER ========== 
         if(currentPage === "start") {
             const starBtn = document.getElementById("starButton");
             if(starBtn) starBtn.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
@@ -709,7 +772,6 @@
             const volBtn = document.getElementById("lkpdVolumeTetap");
             const tekBtn = document.getElementById("lkpdTekananTetap");
             const suhuBtn = document.getElementById("lkpdSuhuTetap");
-            
             if(backHome) backHome.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
             if(volBtn) volBtn.addEventListener("click",()=>{ lkpdMode = "volume_tetap"; currentPage="lkpd_form"; render(); });
             if(tekBtn) tekBtn.addEventListener("click",()=>{ lkpdMode = "tekanan_tetap"; currentPage="lkpd_form"; render(); });
@@ -720,7 +782,6 @@
             const backMenu = document.getElementById("backToLkpdMenu");
             const backHome = document.getElementById("backHomeLkpdForm");
             const saveBtn = document.getElementById("saveLkpdBtn");
-            
             if(backMenu) backMenu.addEventListener("click",()=>{ currentPage="lkpd_menu"; render(); });
             if(backHome) backHome.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
             if(saveBtn) saveBtn.addEventListener("click",()=>{
@@ -778,10 +839,8 @@
                 if(backHome) backHome.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
                 if(backPet) backPet.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
                 
-                // Expose fungsi untuk global agar bisa dipanggil dari onclick
                 window.changePartikelJenis = changePartikelJenis;
                 window.changeUnsur = changeUnsur;
-                
                 updateByProcess();
             }
         }
@@ -789,4 +848,4 @@
     render();
 </script>
 </body>
-</html
+</html>
