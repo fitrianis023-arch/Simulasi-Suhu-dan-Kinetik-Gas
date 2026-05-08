@@ -223,50 +223,51 @@
             .partikel-selector { flex-direction: column; align-items: stretch; }
         }
 
-        /* MATERI DENGAN PEMISAHAN PROSES */
-        .materi-grid-proses {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .proses-card {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 1.5rem;
-            padding: 1.2rem;
+        /* ---------- STYLE MATERI BARU ---------- */
+        .materi-container {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin-top: 0.5rem;
+            backdrop-filter: blur(4px);
             border: 1px solid rgba(250, 204, 21, 0.3);
-            transition: all 0.2s;
         }
-        .proses-card.isokhorik { border-left: 8px solid #10b981; }
-        .proses-card.isobarik { border-left: 8px solid #3b82f6; }
-        .proses-card.isotermal { border-left: 8px solid #f59e0b; }
-        .proses-card h4 {
-            font-size: 1.4rem;
+        .materi-container h3 {
+            color: #facc15;
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            border-left: 5px solid #facc15;
+            padding-left: 1rem;
         }
-        .proses-card .persamaan {
-            font-family: monospace;
+        .materi-container h4 {
+            color: #86efac;
+            margin: 1rem 0 0.4rem;
+            font-size: 1.2rem;
+        }
+        .materi-container .rumus {
             background: #0f172a;
-            padding: 0.4rem 1rem;
-            border-radius: 1rem;
-            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border-radius: 1.2rem;
+            font-family: monospace;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #facc15;
-            margin: 0.5rem 0;
-            font-size: 1rem;
-        }
-        .rumus-sederhana {
-            font-size: 0.9rem;
-            background: #1e293b;
-            padding: 0.2rem 0.8rem;
-            border-radius: 2rem;
             display: inline-block;
-            margin-left: 0.5rem;
-            color: #cbd5e6;
+            margin: 0.5rem 0;
+            letter-spacing: 0.5px;
+            border: 1px solid #facc1544;
+        }
+        .materi-container p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .materi-highlight {
+            background: #2d3748;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 6px solid #facc15;
         }
     </style>
 </head>
@@ -570,9 +571,9 @@
             html += `<div><h2>📖 Panduan Simulasi</h2>
                 <p style="margin:15px 0;color:#cbd5e6;">3 proses termodinamika dengan LKPD terpisah:</p>
                 <ul style="color:#cbd5e6;margin-left:1.5rem;line-height:1.8;">
-                    <li>🟢 <strong style="color:#34d399;">Volume Tetap (Isokhorik)</strong> - LKPD 1: Hukum Charles (P ∝ T)</li>
-                    <li>🔵 <strong style="color:#60a5fa;">Tekanan Tetap (Isobarik)</strong> - LKPD 2: Hukum Gay-Lussac (V ∝ T)</li>
-                    <li>🟠 <strong style="color:#fbbf24;">Suhu Tetap (Isotermal)</strong> - LKPD 3: Hukum Boyle (P ∝ 1/V)</li>
+                    <li>🟢 <strong style="color:#34d399;">Volume Tetap</strong> - LKPD 1: Hukum Charles (P ∝ T)</li>
+                    <li>🔵 <strong style="color:#60a5fa;">Tekanan Tetap</strong> - LKPD 2: Hukum Gay-Lussac (V ∝ T)</li>
+                    <li>🟠 <strong style="color:#fbbf24;">Suhu Tetap</strong> - LKPD 3: Hukum Boyle (P ∝ 1/V)</li>
                     <li>➕➖ Tombol partikel: ubah jumlah molekul (5-200)</li>
                     <li>⚛️ Pilih jenis partikel (Monoatomik/Diatomik) dan unsur gas</li>
                 </ul>
@@ -584,51 +585,44 @@
             </div>`;
         }
         else if(currentPage === "materi") {
-            // MATERI DENGAN PEMISAHAN ISOBARIK, ISOTERMAL, ISOKHORIK
-            html += `<div class="nav-buttons"><h2>📚 Teori Kinetik Gas | Proses Termodinamika</h2><button id="backHomeMateri" class="btn">🏠 Beranda</button></div>
-            <div class="materi-container" style="background: rgba(0,0,0,0.55); border-radius: 2rem; padding: 1.8rem;">
-                <div class="materi-grid-proses">
-                    <div class="proses-card isokhorik">
-                        <h4><i class="fas fa-arrows-alt-v" style="color:#10b981;"></i> Isokhorik (Volume Tetap)</h4>
-                        <p>Proses termodinamika yang terjadi pada <strong>volume konstan</strong>. Tekanan gas sebanding dengan suhu mutlaknya. Dikenal juga sebagai <strong>Hukum Charles</strong> dalam hubungan P-T.</p>
-                        <div class="persamaan">P₁ / T₁ = P₂ / T₂</div>
-                        <div class="rumus-sederhana">P ∝ T (pada V konstan)</div>
-                        <p style="margin-top:8px;">Energi kinetik rata-rata meningkat seiring kenaikan suhu, sehingga partikel menumbuk dinding lebih kuat → tekanan naik.</p>
-                    </div>
-                    <div class="proses-card isobarik">
-                        <h4><i class="fas fa-chart-line" style="color:#3b82f6;"></i> Isobarik (Tekanan Tetap)</h4>
-                        <p>Proses pada <strong>tekanan konstan</strong>. Volume gas berbanding lurus dengan suhu mutlak (<strong>Hukum Gay-Lussac</strong>).</p>
-                        <div class="persamaan">V₁ / T₁ = V₂ / T₂</div>
-                        <div class="rumus-sederhana">V ∝ T (pada P konstan)</div>
-                        <p style="margin-top:8px;">Saat suhu naik, partikel bergerak lebih cepat, agar tekanan tetap, volume harus membesar.</p>
-                    </div>
-                    <div class="proses-card isotermal">
-                        <h4><i class="fas fa-thermometer-half" style="color:#f59e0b;"></i> Isotermal (Suhu Tetap)</h4>
-                        <p>Proses pada <strong>suhu konstan</strong>. Tekanan berbanding terbalik dengan volume (<strong>Hukum Boyle</strong>).</p>
-                        <div class="persamaan">P₁ · V₁ = P₂ · V₂</div>
-                        <div class="rumus-sederhana">P ∝ 1/V (pada T konstan)</div>
-                        <p style="margin-top:8px;">Energi kinetik rata-rata tetap, sehingga perkalian tekanan dan volume bersifat konstan.</p>
-                    </div>
+            // ========== MATERI LENGKAP ENERGI KINETIK, KECEPATAN, TUMBUKAN ==========
+            html += `<div class="nav-buttons"><h2>📚 Teori Kinetik Gas</h2><button id="backHomeMateri" class="btn">🏠 Beranda</button></div>
+            <div class="materi-container">
+                <div class="materi-highlight">
+                    <h4 style="color:#facc15; margin:0 0 4px 0;">🔬 Teori Dasar Gas Ideal</h4>
+                    <p>Gas terdiri atas partikel-partikel kecil yang bergerak acak, tidak ada gaya interaksi kecuali saat tumbukan lenting sempurna. Volume partikel diabaikan terhadap ruang.</p>
                 </div>
-                <div style="margin-top: 2rem;">
-                    <h4 style="color:#facc15;">⚡ Energi Kinetik Rata-rata (Ek) & Kecepatan RMS</h4>
-                    <p>Ek<sub>rata</sub> = (f/2) k T , untuk monoatomik f=3 ⇒ Ek = 3/2 kT. <br> Kecepatan RMS: v<sub>rms</sub> = √(3kT/m). Semakin tinggi suhu, semakin besar kecepatan dan energi kinetik.</p>
-                    <div class="rumus" style="margin-top:0.5rem;">v<sub>rms</sub> = √(3RT/M) , Ek<sub>total</sub> = (3/2)nRT (monoatomik)</div>
-                    <div style="margin-top:1rem; background:#0f172a; border-radius:1rem; padding:0.8rem;">
-                        <i class="fas fa-hand-fist"></i> <strong>Frekuensi tumbukan (z)</strong> ≈ √2 · π · d² · v<sub>rms</sub> · (N/V). Makin rapat partikel atau makin tinggi suhu → tumbukan makin sering.
-                    </div>
-                </div>
+                
+                <h3>⚡ 1. Energi Kinetik Rata-rata (Ek)</h3>
+                <p>Energi kinetik rata-rata partikel gas berbanding lurus dengan suhu mutlaknya. Dirumuskan sebagai:</p>
+                <div class="rumus">Ek = (f/2) · k · T</div>
+                <p>Dimana <strong>f</strong> = derajat kebebasan (3 untuk monoatomik, 5 untuk diatomik suhu sedang), <strong>k</strong> = konstanta Boltzmann (1,38×10⁻²³ J/K), <strong>T</strong> = suhu (Kelvin). Untuk gas monoatomik: <strong>Ek<sub>rata</sub> = (3/2) k T</strong>. Energi kinetik tidak bergantung pada jenis gas, hanya suhu!</p>
+                
+                <h3>🚀 2. Kecepatan Partikel Gas</h3>
+                <p>Kecepatan gas digambarkan dengan kecepatan rata-rata kuadrat (Root Mean Square / RMS). Rumus fundamental:</p>
+                <div class="rumus">v<sub>rms</sub> = √(3kT / m) &nbsp;&nbsp; atau &nbsp;&nbsp; v<sub>rms</sub> = √(3RT / M)</div>
+                <p>Dengan <strong>m</strong> = massa satu partikel (kg), <strong>M</strong> = massa molar (kg/mol), <strong>R</strong> = 8,314 J/(mol·K). Kecepatan RMS sebanding dengan akar suhu dan berbanding terbalik dengan akar massa partikel. Gas ringan (H₂, He) bergerak lebih cepat.</p>
+                
+                <h3>💥 3. Tumbukan Antarmolekul & Frekuensi Tumbukan</h3>
+                <p>Partikel gas senantiasa bertumbukan dengan dinding wadah (menimbulkan tekanan) dan antar partikel. Frekuensi tumbukan (z) bergantung pada rapat jumlah (N/V), diameter efektif (d), serta kecepatan rata-rata partikel. Rumus frekuensi tumbukan per molekul:</p>
+                <div class="rumus">z = √2 · π · d² · v<sub>rms</sub> · (N / V)</div>
+                <p>Jumlah total tumbukan per satuan waktu sangat besar, menandakan dinamika gas. Dalam simulasi, semakin tinggi suhu atau rapat partikel, semakin sering tumbukan terjadi.</p>
+                
+                <h3>📐 4. Hubungan Tekanan, Volume, dan Energi Kinetik</h3>
+                <p>Tekanan gas dapat dinyatakan sebagai: <span class="rumus" style="font-size:0.9rem;">P = (2/3) · (N/V) · Ek<sub>rata</sub></span>. Ini menghubungkan makroskopik (P) dengan mikroskopik (Ek). Dengan mempertahankan rumus sebelumnya: <strong>PV = nRT</strong> (gas ideal) serta <strong>Ek<sub>total</sub> = (3/2)nRT</strong> untuk monoatomik.</p>
+                <p>Untuk proses <strong>Volume Tetap</strong>: P₁/T₁ = P₂/T₂ (Hukum Charles). <strong>Tekanan Tetap</strong>: V₁/T₁ = V₂/T₂ (Gay-Lussac). <strong>Suhu Tetap</strong>: P₁V₁ = P₂V₂ (Boyle). Semua konsisten dengan teori kinetik gas.</p>
+                <div class="info-text" style="margin-top:12px;"><i class="fas fa-microchip"></i> Energi kinetik, kecepatan RMS, dan tumbukan divisualisasikan secara real-time pada halaman Simulasi!</div>
             </div>
             <button id="backMateriPetunjuk" class="btn" style="margin-top:1rem;">← Kembali ke Petunjuk</button>`;
         }
         else if(currentPage === "lkpd_menu") {
             html += `<div class="nav-buttons"><h2><i class="fas fa-pen-fancy"></i> Pilih Lembar Kerja Peserta Didik (LKPD)</h2><button id="backHomeLkpdMenu" class="btn">🏠 Beranda</button></div>
             <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin:1.5rem 0;">
-                <div class="lkpd-menu-card volume-tetap" id="lkpdVolumeTetap"><i class="fas fa-arrows-alt-v"></i><h3>LKPD 1</h3><div class="judul">Isokhorik (Volume Tetap)</div><div class="sub">Hubungan P dengan T</div></div>
-                <div class="lkpd-menu-card tekanan-tetap" id="lkpdTekananTetap"><i class="fas fa-chart-line"></i><h3>LKPD 2</h3><div class="judul">Isobarik (Tekanan Tetap)</div><div class="sub">Hubungan V dengan T</div></div>
-                <div class="lkpd-menu-card suhu-tetap" id="lkpdSuhuTetap"><i class="fas fa-thermometer-half"></i><h3>LKPD 3</h3><div class="judul">Isotermal (Suhu Tetap)</div><div class="sub">Hubungan P dengan V</div></div>
+                <div class="lkpd-menu-card volume-tetap" id="lkpdVolumeTetap"><i class="fas fa-arrows-alt-v"></i><h3>LKPD 1</h3><div class="judul">Volume Tetap</div><div class="sub">Hubungan P dengan T</div></div>
+                <div class="lkpd-menu-card tekanan-tetap" id="lkpdTekananTetap"><i class="fas fa-chart-line"></i><h3>LKPD 2</h3><div class="judul">Tekanan Tetap</div><div class="sub">Hubungan V dengan T</div></div>
+                <div class="lkpd-menu-card suhu-tetap" id="lkpdSuhuTetap"><i class="fas fa-thermometer-half"></i><h3>LKPD 3</h3><div class="judul">Suhu Tetap</div><div class="sub">Hubungan P dengan V</div></div>
             </div>
-            <div class="feedback-guru"><i class="fas fa-info-circle"></i><span>Pilih LKPD sesuai proses termodinamika yang ingin dipelajari</span></div>`;
+            <div class="feedback-guru"><i class="fas fa-info-circle"></i><span>Pilih LKPD sesuai proses yang ingin dipelajari</span></div>`;
         }
         else if(currentPage === "lkpd_form") {
             const data = lkpdData[lkpdMode];
@@ -637,17 +631,17 @@
             let fixedVal = "";
             
             if(lkpdMode === 'volume_tetap') { 
-                containerClass = "volume-tetap"; badgeClass = "badge-volume"; badgeText = "Isokhorik (Volume Tetap) | Hukum Charles"; titleIcon = "🟢"; 
+                containerClass = "volume-tetap"; badgeClass = "badge-volume"; badgeText = "Volume Tetap | Hukum Charles"; titleIcon = "🟢"; 
                 tujuanText = "Menyelidiki hubungan antara <strong>Tekanan (P)</strong> dengan <strong>Suhu (T)</strong> pada Volume tetap (V = 3,00 L)";
                 col1 = "Tekanan (atm)"; col2 = "Suhu (K)"; col3 = "Volume (L) <span class='tetap-badge'>tetap 3,00</span>";
                 fixedVal = "3.00";
             } else if(lkpdMode === 'tekanan_tetap') { 
-                containerClass = "tekanan-tetap"; badgeClass = "badge-tekanan"; badgeText = "Isobarik (Tekanan Tetap) | Hukum Gay-Lussac"; titleIcon = "🔵"; 
+                containerClass = "tekanan-tetap"; badgeClass = "badge-tekanan"; badgeText = "Tekanan Tetap | Hukum Gay-Lussac"; titleIcon = "🔵"; 
                 tujuanText = "Menyelidiki hubungan antara <strong>Volume (V)</strong> dengan <strong>Suhu (T)</strong> pada Tekanan tetap (P = 2,50 atm)";
                 col1 = "Volume (L)"; col2 = "Suhu (K)"; col3 = "Tekanan (atm) <span class='tetap-badge'>tetap 2,50</span>";
                 fixedVal = "2.50";
             } else { 
-                containerClass = "suhu-tetap"; badgeClass = "badge-suhu"; badgeText = "Isotermal (Suhu Tetap) | Hukum Boyle"; titleIcon = "🟠"; 
+                containerClass = "suhu-tetap"; badgeClass = "badge-suhu"; badgeText = "Suhu Tetap | Hukum Boyle"; titleIcon = "🟠"; 
                 tujuanText = "Menyelidiki hubungan antara <strong>Tekanan (P)</strong> dengan <strong>Volume (V)</strong> pada Suhu tetap (T = 400 K)";
                 col1 = "Tekanan (atm)"; col2 = "Volume (L)"; col3 = "Suhu (K) <span class='tetap-badge'>tetap 400</span>";
                 fixedVal = "400";
@@ -670,7 +664,7 @@
                 <button id="backHomeLkpdForm" class="btn"><i class="fas fa-home"></i> Beranda</button>
             </div>
             <div class="lkpd-form-container ${containerClass}">
-                <div class="lkpd-header"><h2>${titleIcon} ${lkpdMode === 'volume_tetap' ? 'LKPD 1 (Isokhorik)' : (lkpdMode === 'tekanan_tetap' ? 'LKPD 2 (Isobarik)' : 'LKPD 3 (Isotermal)')}</h2><span class="badge ${badgeClass}">${badgeText}</span></div>
+                <div class="lkpd-header"><h2>${titleIcon} ${lkpdMode === 'volume_tetap' ? 'LKPD 1' : (lkpdMode === 'tekanan_tetap' ? 'LKPD 2' : 'LKPD 3')}</h2><span class="badge ${badgeClass}">${badgeText}</span></div>
                 
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-bullseye"></i> Tujuan Percobaan</div><div class="tujuan-text">${tujuanText}</div></div>
                 
@@ -709,9 +703,9 @@
             html += `<div class="nav-buttons"><h2><i class="fas fa-microscope"></i> Simulasi Gas</h2><button id="backHomeSim" class="btn">🏠 Beranda</button></div>
             <div class="sim-card">
                 <div class="proses-buttons">
-                    <button id="btnVolumeTetap" class="btn-proses ${activeProcess === 'volume_tetap' ? 'aktif' : ''}"><i class="fas fa-arrows-alt-v"></i> Isokhorik (V tetap)</button>
-                    <button id="btnTekananTetap" class="btn-proses ${activeProcess === 'tekanan_tetap' ? 'aktif' : ''}"><i class="fas fa-chart-line"></i> Isobarik (P tetap)</button>
-                    <button id="btnSuhuTetap" class="btn-proses ${activeProcess === 'suhu_tetap' ? 'aktif' : ''}"><i class="fas fa-thermometer-half"></i> Isotermal (T tetap)</button>
+                    <button id="btnVolumeTetap" class="btn-proses ${activeProcess === 'volume_tetap' ? 'aktif' : ''}"><i class="fas fa-arrows-alt-v"></i> Volume Tetap</button>
+                    <button id="btnTekananTetap" class="btn-proses ${activeProcess === 'tekanan_tetap' ? 'aktif' : ''}"><i class="fas fa-chart-line"></i> Tekanan Tetap</button>
+                    <button id="btnSuhuTetap" class="btn-proses ${activeProcess === 'suhu_tetap' ? 'aktif' : ''}"><i class="fas fa-thermometer-half"></i> Suhu Tetap</button>
                 </div>
                 <div class="canvas-orb"><canvas id="gasCanvas" width="800" height="400"></canvas></div>
                 <div style="display:flex;flex-wrap:wrap;gap:1rem;">
@@ -751,11 +745,12 @@
         html += `</div>`;
         root.innerHTML = html;
         
-        // ========== EVENT HANDLERS (tetap dipertahankan) ==========
+        // ========== EVENT HANDLER ========== 
         if(currentPage === "start") {
             const starBtn = document.getElementById("starButton");
             if(starBtn) starBtn.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
         }
+        
         if(currentPage === "petunjuk") {
             const goSim = document.getElementById("goSimulasi");
             const goMat = document.getElementById("goMateri");
@@ -764,12 +759,14 @@
             if(goMat) goMat.addEventListener("click",()=>{ currentPage="materi"; render(); });
             if(goLkpd) goLkpd.addEventListener("click",()=>{ currentPage="lkpd_menu"; render(); });
         }
+        
         if(currentPage === "materi") {
             const backHome = document.getElementById("backHomeMateri");
             const backPet = document.getElementById("backMateriPetunjuk");
             if(backHome) backHome.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
             if(backPet) backPet.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
         }
+        
         if(currentPage === "lkpd_menu") {
             const backHome = document.getElementById("backHomeLkpdMenu");
             const volBtn = document.getElementById("lkpdVolumeTetap");
@@ -780,6 +777,7 @@
             if(tekBtn) tekBtn.addEventListener("click",()=>{ lkpdMode = "tekanan_tetap"; currentPage="lkpd_form"; render(); });
             if(suhuBtn) suhuBtn.addEventListener("click",()=>{ lkpdMode = "suhu_tetap"; currentPage="lkpd_form"; render(); });
         }
+        
         if(currentPage === "lkpd_form") {
             const backMenu = document.getElementById("backToLkpdMenu");
             const backHome = document.getElementById("backHomeLkpdForm");
@@ -808,6 +806,7 @@
                 alert("✓ LKPD berhasil disimpan!");
             });
         }
+        
         if(currentPage === "simulasi") {
             canvas = document.getElementById("gasCanvas");
             if(canvas) {
