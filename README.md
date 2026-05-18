@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=DEVICE-WIDTH, initial-scale=1.0, user-scalable=no">
-    <title>TermoLab | Simulasi Gas & LKPD Digital</title>
+    <title>Simulasi interaktif suhu dan teori kinetik gas</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -26,6 +26,103 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            position: relative;
+        }
+        .author-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            border: 1px solid rgba(250, 204, 21, 0.5);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #facc15;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .author-btn:hover {
+            background: rgba(250, 204, 21, 0.2);
+            transform: scale(1.02);
+            border-color: #facc15;
+        }
+        .author-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .author-modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .author-modal-content {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 2rem;
+            padding: 2rem 2.5rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #facc15;
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .author-modal.show .author-modal-content {
+            transform: scale(1);
+        }
+        .author-modal-content h3 {
+            color: #facc15;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(250, 204, 21, 0.3);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        .author-modal-content .author-list {
+            text-align: left;
+            margin: 1.5rem 0;
+        }
+        .author-modal-content .author-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e2e8f0;
+            font-size: 1.1rem;
+        }
+        .author-modal-content .author-item i {
+            color: #facc15;
+            width: 30px;
+            font-size: 1.2rem;
+        }
+        .author-modal-content .close-author {
+            background: linear-gradient(135deg, #facc15, #e6a017);
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.2s;
         }
         .content-wrap { padding: 2rem 2.2rem; }
         button, .btn {
@@ -129,7 +226,6 @@
         .info-text { font-size: 0.7rem; color: #94a3b8; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
         .nav-buttons { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
         
-        /* Simulasi */
         .sim-card { background: rgba(18, 28, 40, 0.8); border-radius: 2rem; padding: 1.5rem; margin: 1rem 0; }
         .canvas-orb { display: flex; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 2rem; padding: 12px; margin-bottom: 1.5rem; }
         canvas { background: radial-gradient(circle at 30% 20%, #1e293b, #0f172a); border-radius: 2rem; width: 100%; height: auto; }
@@ -141,56 +237,83 @@
         input[type="range"]:disabled::-webkit-slider-thumb { background: #6b7280; cursor: not-allowed; }
         .value-badge { background: #0f172a; padding: 4px 10px; border-radius: 2rem; font-size: 0.8rem; font-weight: 500; color: #facc15; display: inline-block; margin-top: 6px; }
         
-        /* Pilihan jenis partikel */
         .partikel-selector {
             background: rgba(0, 0, 0, 0.5);
             border-radius: 1.5rem;
-            padding: 1rem;
+            padding: 1rem 1.2rem;
             margin-top: 1rem;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
+            gap: 1.2rem;
         }
         .partikel-selector label {
             color: #facc15;
-            font-weight: 600;
-            margin-right: 0.5rem;
+            font-weight: 700;
+            margin-right: 0.3rem;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
         }
         .partikel-option {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 0.4rem 1rem;
-            border-radius: 2rem;
+            gap: 0.7rem;
+            background: #1e293b;
+            padding: 0.6rem 1.4rem;
+            border-radius: 3rem;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+            border: 1.5px solid #475569;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #cbd5e6;
+        }
+        .partikel-option i {
+            font-size: 1.1rem;
+            color: #64748b;
+            transition: color 0.2s;
         }
         .partikel-option:hover {
-            background: rgba(250, 204, 21, 0.2);
-            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.1);
+            border-color: #a0a0a0;
         }
         .partikel-option.active {
-            background: rgba(250, 204, 21, 0.3);
+            background: #1e293b;
             border-color: #facc15;
-            box-shadow: 0 0 8px rgba(250,204,21,0.3);
+            border-width: 2px;
+            color: #facc15;
+        }
+        .partikel-option.active i {
+            color: #facc15;
         }
         .partikel-option input {
-            margin-right: 4px;
+            margin-right: 6px;
             cursor: pointer;
+            width: 16px;
+            height: 16px;
+            accent-color: #facc15;
         }
-        .unsur-select {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #facc15;
-            border-radius: 2rem;
-            padding: 0.4rem 1rem;
+        .partikel-option .sub-teks {
+            font-size: 0.65rem;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        .partikel-option.active .sub-teks {
             color: #facc15;
-            font-weight: 600;
+            opacity: 0.8;
+        }
+        
+        .unsur-select {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1.5px solid #facc15;
+            border-radius: 2.5rem;
+            padding: 0.5rem 1rem;
+            color: #facc15;
+            font-weight: 700;
             cursor: pointer;
             margin-left: 0.5rem;
+            font-size: 0.9rem;
         }
         .unsur-select option {
             background: #0f172a;
@@ -221,9 +344,10 @@
             .observ-table th, .observ-table td { padding: 6px 4px; font-size: 0.7rem; }
             .observ-table input { font-size: 0.7rem; }
             .partikel-selector { flex-direction: column; align-items: stretch; }
+            .partikel-option { justify-content: center; }
+            .author-btn { font-size: 0.7rem; padding: 0.4rem 1rem; top: 10px; left: 12px; }
         }
 
-        /* ---------- STYLE MATERI BARU ---------- */
         .materi-container {
             background: rgba(0, 0, 0, 0.55);
             border-radius: 2rem;
@@ -269,13 +393,72 @@
             margin: 1rem 0;
             border-left: 6px solid #facc15;
         }
+        .author-info {
+            background: rgba(0,0,0,0.4);
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            text-align: center;
+            border-top: 1px solid rgba(250,204,21,0.3);
+        }
+        .author-info p {
+            margin: 4px 0;
+            color: #cbd5e6;
+        }
+        .author-info strong {
+            color: #facc15;
+        }
     </style>
 </head>
 <body>
-<div class="cosmic-container" id="appRoot"></div>
+<div class="cosmic-container" id="appRoot">
+    <div class="author-btn" id="authorBtn">
+        <i class="fas fa-user-pen"></i>
+        <span>Author :</span>
+    </div>
+</div>
+
+<div class="author-modal" id="authorModal">
+    <div class="author-modal-content">
+        <h3><i class="fas fa-users"></i> Tim Author</h3>
+        <div class="author-list">
+            <div class="author-item">
+                <i class="fas fa-user-graduate"></i>
+                <span><strong>Fitriani</strong></span>
+            </div>
+            <div class="author-item">
+                <i class="fas fa-user-graduate"></i>
+                <span><strong>Nur Azizah</strong></span>
+            </div>
+            <div class="author-item">
+                <i class="fas fa-chalkboard-user"></i>
+                <span><strong>Dra. Hj. Nurhayati, M.Si</strong> <span style="font-size:0.8rem; color:#94a3b8;">(Dosen Pembimbing)</span></span>
+            </div>
+        </div>
+        <button class="close-author" id="closeAuthorModal"><i class="fas fa-check"></i> Tutup</button>
+    </div>
+</div>
 
 <script>
-    // ==================== DATA LKPD (TIDAK BERUBAH) ====================
+    // AUTHOR MODAL
+    const authorBtn = document.getElementById('authorBtn');
+    const authorModal = document.getElementById('authorModal');
+    const closeAuthorModal = document.getElementById('closeAuthorModal');
+    
+    if(authorBtn) {
+        authorBtn.addEventListener('click', () => { authorModal.classList.add('show'); });
+    }
+    if(closeAuthorModal) {
+        closeAuthorModal.addEventListener('click', () => { authorModal.classList.remove('show'); });
+    }
+    if(authorModal) {
+        authorModal.addEventListener('click', (e) => {
+            if(e.target === authorModal) authorModal.classList.remove('show');
+        });
+    }
+    
+    // DATA LKPD
     let lkpdData = {
         volume_tetap: { tujuan: "", rumusan: "", hipotesis: "", tabel: [], analisis: "", kesimpulan: "" },
         tekanan_tetap: { tujuan: "", rumusan: "", hipotesis: "", tabel: [], analisis: "", kesimpulan: "" },
@@ -303,7 +486,7 @@
     let currentPage = "start";
     let lkpdMode = null;
     
-    // ==================== SIMULASI GAS ====================
+    // SIMULASI GAS
     let canvas, ctx, animationId = null;
     let particles = [];
     let PARTICLE_COUNT = 48;
@@ -312,11 +495,9 @@
     let activeProcess = 'tekanan_tetap';
     let refPressure = 2.5, refVolume = 3.0;
     
-    // Jenis partikel dan unsur
-    let partikelJenis = 'monoatomik'; // 'monoatomik' atau 'diatomik'
-    let unsurTerpilih = 'He'; // default Helium
+    let partikelJenis = 'monoatomik';
+    let unsurTerpilih = 'He';
     
-    // Data unsur
     const unsurMonoatomik = [
         { nama: 'Helium (He)', kode: 'He', massa: 6.64e-27, warna: '#ffb347', kecepatanFaktor: 1.0 },
         { nama: 'Neon (Ne)', kode: 'Ne', massa: 3.35e-26, warna: '#ff8c42', kecepatanFaktor: 0.95 },
@@ -327,7 +508,7 @@
         { nama: 'Nitrogen (N₂)', kode: 'N₂', massa: 4.65e-26, warna: '#5a9ec2', kecepatanFaktor: 0.95 }
     ];
     
-    let currentMassa = 6.64e-27; // massa Helium
+    let currentMassa = 6.64e-27;
     let currentWarna = '#ffb347';
     
     function updateMassaDanWarna() {
@@ -343,11 +524,10 @@
     }
     
     const MIN_VOL = 0.5, MAX_VOL = 10.0;
-    const MIN_TEMP = 0, MAX_TEMP = 800;
+    const MIN_TEMP = 0, MAX_TEMP = 400;
     const MIN_PRESS = 0, MAX_PRESS = 5.0;
     const NORM_TEMP = 400, NORM_PRESS = 2.5, NORM_VOL = 3.0;
     const MIN_PARTICLES = 5, MAX_PARTICLES = 200;
-    
     const BOLTZMANN = 1.38e-23;
     
     function calculateVolumeFromTempAndPressure(temp, press) {
@@ -376,19 +556,34 @@
         let numberDensity = PARTICLE_COUNT / Math.max(0.1, volume);
         let diameter = (partikelJenis === 'monoatomik') ? 2.2e-10 : 3.0e-10;
         let collFreq = numberDensity * Math.PI * diameter * diameter * avgSpeed * 1.414;
-        let scaledColl = collFreq * 1e13;
-        return Math.min(80000, Math.max(0, Math.round(scaledColl))).toLocaleString();
+        
+        // Tampilkan dalam notasi ilmiah yang mudah dibaca
+        if(isNaN(collFreq) || !isFinite(collFreq)) return "0.00";
+        if(collFreq < 1) {
+            // Jika kurang dari 1, tampilkan dalam notasi ilmiah dengan 2 desimal
+            return collFreq.toExponential(2);
+        } else if(collFreq > 1e12) {
+            // Tampilkan dalam triliunan
+            return (collFreq / 1e12).toFixed(2) + " × 10¹²";
+        } else if(collFreq > 1e9) {
+            // Tampilkan dalam miliaran
+            return (collFreq / 1e9).toFixed(2) + " × 10⁹";
+        } else if(collFreq > 1e6) {
+            // Tampilkan dalam jutaan
+            return (collFreq / 1e6).toFixed(2) + " × 10⁶";
+        } else {
+            // Tampilkan langsung
+            return collFreq.toFixed(0);
+        }
     }
     
     function updateMolecularInfo() {
         const ekSpan = document.getElementById('kineticEnergy');
         const speedSpan = document.getElementById('avgSpeed');
         const collSpan = document.getElementById('collisionRate');
-        const jenisSpan = document.getElementById('jenisPartikel');
         if(ekSpan) ekSpan.innerText = calculateAvgKineticEnergy();
         if(speedSpan) speedSpan.innerText = calculateRMSSpeed();
         if(collSpan) collSpan.innerText = calculateCollisionsPerSecond();
-        if(jenisSpan) jenisSpan.innerText = partikelJenis === 'monoatomik' ? 'Monoatomik' : 'Diatomik';
     }
     
     function updateByProcess() {
@@ -486,7 +681,6 @@
     
     function setProcess(process) {
         activeProcess = process;
-        
         const volSlider = document.getElementById('volSlider');
         const tempSlider = document.getElementById('tempSlider');
         const pressSlider = document.getElementById('pressSlider');
@@ -536,6 +730,18 @@
         if(radioMono) radioMono.checked = (jenis === 'monoatomik');
         if(radioDi) radioDi.checked = (jenis === 'diatomik');
         
+        const monoOption = document.querySelector('.partikel-option:first-child');
+        const diOption = document.querySelector('.partikel-option:last-child');
+        if(monoOption && diOption) {
+            if(jenis === 'monoatomik') {
+                monoOption.classList.add('active');
+                diOption.classList.remove('active');
+            } else {
+                diOption.classList.add('active');
+                monoOption.classList.remove('active');
+            }
+        }
+        
         const unsurSelect = document.getElementById('unsurSelect');
         if(unsurSelect) {
             if (jenis === 'monoatomik') {
@@ -553,18 +759,18 @@
         updateMolecularInfo();
     }
     
-    // ==================== RENDER ====================
+    // RENDER
     function render() {
         const root = document.getElementById("appRoot");
         if(!root) return;
+        
         let html = `<div class="content-wrap">`;
         
         if(currentPage === "start") {
             html += `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;">
                 <div id="starButton" style="background:radial-gradient(circle at 30% 25%, #ffdf8c, #e6a017);padding:2rem 3rem;border-radius:6rem;cursor:pointer;">
-                    <i class="fas fa-atom" style="font-size:3rem;color:#fff3bf;"></i><br><span style="font-size:1rem;font-weight:600;color:#fff;">TERMOLAB</span>
+                    <i class="fas fa-atom" style="font-size:3rem;color:#fff3bf;"></i><br><span style="font-size:1.2rem;font-weight:800;color:#fff;">Simulasi Suhu dan Teori Kinetik Gas</span>
                 </div>
-                <p style="margin-top:20px;color:#cbd5e6;">✦ Simulasi Gas Ideal | LKPD 3 Proses Termodinamika ✦</p>
             </div>`;
         }
         else if(currentPage === "petunjuk") {
@@ -577,6 +783,9 @@
                     <li>➕➖ Tombol partikel: ubah jumlah molekul (5-200)</li>
                     <li>⚛️ Pilih jenis partikel (Monoatomik/Diatomik) dan unsur gas</li>
                 </ul>
+                <div class="author-info" style="margin-top: 1rem;">
+                    <p><strong>👤 Author:</strong> Fitriani <br> Nur Azizah <br>Dra. Hj. Nurhayati,M.Si </p>
+                </div>
                 <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
                     <button class="btn-primary" id="goSimulasi"><i class="fas fa-play"></i> Simulasi</button>
                     <button class="btn-primary" id="goMateri"><i class="fas fa-book"></i> Materi</button>
@@ -585,29 +794,24 @@
             </div>`;
         }
         else if(currentPage === "materi") {
-            // ========== MATERI LENGKAP ENERGI KINETIK, KECEPATAN, TUMBUKAN ==========
             html += `<div class="nav-buttons"><h2>📚 Teori Kinetik Gas</h2><button id="backHomeMateri" class="btn">🏠 Beranda</button></div>
             <div class="materi-container">
                 <div class="materi-highlight">
                     <h4 style="color:#facc15; margin:0 0 4px 0;">🔬 Teori Dasar Gas Ideal</h4>
                     <p>Gas terdiri atas partikel-partikel kecil yang bergerak acak, tidak ada gaya interaksi kecuali saat tumbukan lenting sempurna. Volume partikel diabaikan terhadap ruang.</p>
                 </div>
-                
                 <h3>⚡ 1. Energi Kinetik Rata-rata (Ek)</h3>
                 <p>Energi kinetik rata-rata partikel gas berbanding lurus dengan suhu mutlaknya. Dirumuskan sebagai:</p>
                 <div class="rumus">Ek = (f/2) · k · T</div>
                 <p>Dimana <strong>f</strong> = derajat kebebasan (3 untuk monoatomik, 5 untuk diatomik suhu sedang), <strong>k</strong> = konstanta Boltzmann (1,38×10⁻²³ J/K), <strong>T</strong> = suhu (Kelvin). Untuk gas monoatomik: <strong>Ek<sub>rata</sub> = (3/2) k T</strong>. Energi kinetik tidak bergantung pada jenis gas, hanya suhu!</p>
-                
                 <h3>🚀 2. Kecepatan Partikel Gas</h3>
                 <p>Kecepatan gas digambarkan dengan kecepatan rata-rata kuadrat (Root Mean Square / RMS). Rumus fundamental:</p>
                 <div class="rumus">v<sub>rms</sub> = √(3kT / m) &nbsp;&nbsp; atau &nbsp;&nbsp; v<sub>rms</sub> = √(3RT / M)</div>
                 <p>Dengan <strong>m</strong> = massa satu partikel (kg), <strong>M</strong> = massa molar (kg/mol), <strong>R</strong> = 8,314 J/(mol·K). Kecepatan RMS sebanding dengan akar suhu dan berbanding terbalik dengan akar massa partikel. Gas ringan (H₂, He) bergerak lebih cepat.</p>
-                
                 <h3>💥 3. Tumbukan Antarmolekul & Frekuensi Tumbukan</h3>
                 <p>Partikel gas senantiasa bertumbukan dengan dinding wadah (menimbulkan tekanan) dan antar partikel. Frekuensi tumbukan (z) bergantung pada rapat jumlah (N/V), diameter efektif (d), serta kecepatan rata-rata partikel. Rumus frekuensi tumbukan per molekul:</p>
                 <div class="rumus">z = √2 · π · d² · v<sub>rms</sub> · (N / V)</div>
                 <p>Jumlah total tumbukan per satuan waktu sangat besar, menandakan dinamika gas. Dalam simulasi, semakin tinggi suhu atau rapat partikel, semakin sering tumbukan terjadi.</p>
-                
                 <h3>📐 4. Hubungan Tekanan, Volume, dan Energi Kinetik</h3>
                 <p>Tekanan gas dapat dinyatakan sebagai: <span class="rumus" style="font-size:0.9rem;">P = (2/3) · (N/V) · Ek<sub>rata</sub></span>. Ini menghubungkan makroskopik (P) dengan mikroskopik (Ek). Dengan mempertahankan rumus sebelumnya: <strong>PV = nRT</strong> (gas ideal) serta <strong>Ek<sub>total</sub> = (3/2)nRT</strong> untuk monoatomik.</p>
                 <p>Untuk proses <strong>Volume Tetap</strong>: P₁/T₁ = P₂/T₂ (Hukum Charles). <strong>Tekanan Tetap</strong>: V₁/T₁ = V₂/T₂ (Gay-Lussac). <strong>Suhu Tetap</strong>: P₁V₁ = P₂V₂ (Boyle). Semua konsisten dengan teori kinetik gas.</p>
@@ -665,13 +869,9 @@
             </div>
             <div class="lkpd-form-container ${containerClass}">
                 <div class="lkpd-header"><h2>${titleIcon} ${lkpdMode === 'volume_tetap' ? 'LKPD 1' : (lkpdMode === 'tekanan_tetap' ? 'LKPD 2' : 'LKPD 3')}</h2><span class="badge ${badgeClass}">${badgeText}</span></div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-bullseye"></i> Tujuan Percobaan</div><div class="tujuan-text">${tujuanText}</div></div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-question-circle"></i> Rumusan Masalah</div><textarea class="lkpd-textarea" id="lkpdRumusan" rows="2" placeholder="Tuliskan rumusan masalah...">${escapeHtml(data.rumusan)}</textarea></div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-lightbulb"></i> Hipotesis</div><textarea class="lkpd-textarea" id="lkpdHipotesis" rows="2" placeholder="Tuliskan hipotesis...">${escapeHtml(data.hipotesis)}</textarea></div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-table"></i> Tabel Pengamatan (5 Kali Percobaan)</div>
                     <table class="observ-table">
                         <thead><tr><th>${col1}</th><th>${col2}</th><th>${col3}</th></tr></thead>
@@ -679,11 +879,8 @@
                     </table>
                     <div class="info-text"><i class="fas fa-info-circle"></i> Lakukan 5 kali percobaan dengan mengubah nilai pada simulasi, lalu catat hasilnya.</div>
                 </div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-chart-line"></i> Analisis Data</div><textarea class="lkpd-textarea" id="lkpdAnalisis" rows="3" placeholder="Analisis hubungan antar variabel...">${escapeHtml(data.analisis)}</textarea></div>
-                
                 <div class="lkpd-section"><div class="lkpd-section-title"><i class="fas fa-check-double"></i> Kesimpulan</div><textarea class="lkpd-textarea" id="lkpdKesimpulan" rows="2" placeholder="Tuliskan kesimpulan...">${escapeHtml(data.kesimpulan)}</textarea></div>
-                
                 <button id="saveLkpdBtn" class="save-btn"><i class="fas fa-save"></i> Simpan LKPD</button>
                 <div class="feedback-guru"><i class="fas fa-chalkboard-user"></i><span>Data tersimpan otomatis di browser</span></div>
             </div>`;
@@ -700,7 +897,10 @@
                 unsurOptions = unsurDiatomik.map(u => `<option value="${u.kode}" ${u.kode === unsurTerpilih ? 'selected' : ''}>${u.nama}</option>`).join('');
             }
             
-            html += `<div class="nav-buttons"><h2><i class="fas fa-microscope"></i> Simulasi Gas</h2><button id="backHomeSim" class="btn">🏠 Beranda</button></div>
+            let monoActiveClass = (partikelJenis === 'monoatomik') ? 'active' : '';
+            let diActiveClass = (partikelJenis === 'diatomik') ? 'active' : '';
+            
+            html += `<div class="nav-buttons"><h2><i class="fas fa-microscope"></i> Simulasi Suhu dan Teori Kinetik Gas</h2><button id="backHomeSim" class="btn">🏠 Beranda</button></div>
             <div class="sim-card">
                 <div class="proses-buttons">
                     <button id="btnVolumeTetap" class="btn-proses ${activeProcess === 'volume_tetap' ? 'aktif' : ''}"><i class="fas fa-arrows-alt-v"></i> Volume Tetap</button>
@@ -711,16 +911,16 @@
                 <div style="display:flex;flex-wrap:wrap;gap:1rem;">
                     <div class="param-pod"><label><i class="fas fa-tachometer-alt"></i> Tekanan (atm)</label><input type="range" id="pressSlider" min="0" max="5" step="0.02" value="${pressure}" ${pressDisabled}><span id="pressValue" class="value-badge">${pressure.toFixed(2)} atm</span></div>
                     <div class="param-pod"><label><i class="fas fa-expand-alt"></i> Volume (L)</label><input type="range" id="volSlider" min="0.5" max="10" step="0.05" value="${volume}" ${volDisabled}><span id="volValue" class="value-badge">${volume.toFixed(2)} L</span></div>
-                    <div class="param-pod"><label><i class="fas fa-thermometer-half"></i> Suhu (K)</label><input type="range" id="tempSlider" min="0" max="800" step="5" value="${temperature}" ${tempDisabled}><span id="tempValue" class="value-badge">${Math.round(temperature)} K</span></div>
+                    <div class="param-pod"><label><i class="fas fa-thermometer-half"></i> Suhu (K)</label><input type="range" id="tempSlider" min="0" max="400" step="5" value="${temperature}" ${tempDisabled}><span id="tempValue" class="value-badge">${Math.round(temperature)} K</span></div>
                 </div>
                 
                 <div class="partikel-selector">
-                    <label><i class="fas fa-atom"></i> Jenis Partikel:</label>
-                    <div class="partikel-option ${partikelJenis === 'monoatomik' ? 'active' : ''}" onclick="window.changePartikelJenis('monoatomik')">
-                        <input type="radio" name="jenisPartikel" id="radioMono" ${partikelJenis === 'monoatomik' ? 'checked' : ''}> Monoatomik
+                    <label><i class="fas fa-atom"></i> JENIS PARTIKEL :</label>
+                    <div class="partikel-option ${monoActiveClass}" onclick="window.changePartikelJenis('monoatomik')">
+                        <i class="fas fa-circle"></i> <input type="radio" name="jenisPartikel" id="radioMono" ${partikelJenis === 'monoatomik' ? 'checked' : ''}> <span style="font-weight:600;">MONOATOMIK</span> <span class="sub-teks">(He, Ne, Ar)</span>
                     </div>
-                    <div class="partikel-option ${partikelJenis === 'diatomik' ? 'active' : ''}" onclick="window.changePartikelJenis('diatomik')">
-                        <input type="radio" name="jenisPartikel" id="radioDi" ${partikelJenis === 'diatomik' ? 'checked' : ''}> Diatomik
+                    <div class="partikel-option ${diActiveClass}" onclick="window.changePartikelJenis('diatomik')">
+                        <i class="fas fa-fill-drip"></i> <input type="radio" name="jenisPartikel" id="radioDi" ${partikelJenis === 'diatomik' ? 'checked' : ''}> <span style="font-weight:600;">DIATOMIK</span> <span class="sub-teks">(O₂, N₂)</span>
                     </div>
                     <select id="unsurSelect" class="unsur-select" onchange="window.changeUnsur(this.value)">
                         ${unsurOptions}
@@ -729,8 +929,8 @@
                 
                 <div class="molecular-info">
                     <div class="info-card"><i class="fas fa-bolt"></i><div class="info-label">ENERGI KINETIK</div><div class="info-value" id="kineticEnergy">${calculateAvgKineticEnergy()}</div><div class="info-unit">× 10⁻¹⁹ Joule</div></div>
-                    <div class="info-card"><i class="fas fa-tachometer-alt"></i><div class="info-label">KECEPATAN RMS</div><div class="info-value" id="avgSpeed">${calculateRMSSpeed()}</div><div class="info-unit">meter/detik</div></div>
-                    <div class="info-card"><i class="fas fa-hand-fist"></i><div class="info-label">TUMBUKAN / DETIK</div><div class="info-value" id="collisionRate">${calculateCollisionsPerSecond()}</div><div class="info-unit">kali per detik</div></div>
+                    <div class="info-card"><i class="fas fa-tachometer-alt"></i><div class="info-label">KECEPATAN RMS</div><div class="info-value" id="avgSpeed">${calculateRMSSpeed()}</div><div class="info-unit">m/s</div></div>
+                    <div class="info-card"><i class="fas fa-hand-fist"></i><div class="info-label">TUMBUKAN / DETIK</div><div class="info-value" id="collisionRate">${calculateCollisionsPerSecond()}</div><div class="info-unit">s⁻¹</div></div>
                 </div>
                 
                 <div class="particle-controller">
@@ -745,7 +945,7 @@
         html += `</div>`;
         root.innerHTML = html;
         
-        // ========== EVENT HANDLER ========== 
+        // EVENT HANDLER
         if(currentPage === "start") {
             const starBtn = document.getElementById("starButton");
             if(starBtn) starBtn.addEventListener("click",()=>{ currentPage="petunjuk"; render(); });
